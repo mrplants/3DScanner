@@ -143,17 +143,15 @@ GLuint CubeIndicesData[36] =
     // Make the vertex buffer
     glGenBuffers( 1, &_verticesVBO );
     glBindBuffer( GL_ARRAY_BUFFER, _verticesVBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(GLfloat)*18, self.triangleData.vertexArray, GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(GLfloat) * self.triangleData.lengthOfVertexArray, self.triangleData.vertexArray, GL_STATIC_DRAW );
 //    glBufferData( GL_ARRAY_BUFFER, sizeof(CubeVertexData), CubeVertexData, GL_STATIC_DRAW );
-    NSLog(@"%lu", sizeof(CubeVertexData));
-    NSLog(@"%lu", sizeof(self.triangleData.vertexArray));
     
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     
     // Make the indices buffer
     glGenBuffers( 1, &_indicesVBO );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, _indicesVBO );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 3, self.triangleData.indexArray, GL_STATIC_DRAW );
+    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * self.triangleData.lengthOfIndexArray, self.triangleData.indexArray, GL_STATIC_DRAW );
 //    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(CubeIndicesData), CubeIndicesData, GL_STATIC_DRAW );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     
@@ -341,7 +339,7 @@ GLuint CubeIndicesData[36] =
     }
     
     // Draw!
-    glDrawElements( GL_TRIANGLES, sizeof(GLuint) * 3/sizeof(GLuint), GL_UNSIGNED_INT, NULL );
+    glDrawElements( GL_TRIANGLES, sizeof(GLuint) * self.triangleData.lengthOfIndexArray/sizeof(GLuint), GL_UNSIGNED_INT, NULL );
 //    glDrawElements( GL_TRIANGLES, sizeof(CubeIndicesData)/sizeof(GLuint), GL_UNSIGNED_INT, NULL );
 }
 
