@@ -10,6 +10,7 @@
 
 #define VERTEX_SHADER @"vertex"
 #define FRAGMENT_SHADER @"fragment"
+#define BUFFER_OFFSET(i) ((char *)NULL + i)
 
 typedef struct
 {
@@ -21,78 +22,55 @@ typedef struct
     GLuint _program;
     Uniform* _uniformArray;
     int _uniformArraySize;
-    GLuint _vertexBuffer;
-    GLuint _indexBuffer;
-    float _rotation;
     GLKMatrix4 _projectionMatrix;
     GLKMatrix4 _modelViewMatrix;
     GLuint _verticesVBO;
     GLuint _indicesVBO;
     GLuint _VAO;
+    float _cursor;
+    BOOL _autoRotate;
 }
 @property (strong, nonatomic) EAGLContext *context;
 @property (strong, nonatomic) GLKBaseEffect *effect;
 @end
 
-
-typedef struct {
-    float Position[3];
-    float Color[4];
-    float _rotation;
-} Vertex;
-
-const Vertex Vertices[] = {
-    {{1, -1, 1}, {1, 0, 0, 1}},
-    {{1, 1, 0}, {0, 1, 0, 1}},
-    {{-1, 1, 0}, {0, 0, 1, 1}},
-    {{-1, -1, 1}, {0, 0, 0, 1}},
-    {{-1, -2, 2}, {0.5, 0.5, 0, 1}},
-    {{1, -2, 2}, {0, 0.5, 0.5, 1}}
-};
-
-const GLubyte Indices[] = {
-    0, 1, 2,
-    2, 3, 0,
-    0, 3, 4,
-    4, 5, 0
-};
-GLfloat CubeVertexData[72] =
+GLfloat CubeVertexData[144] =
 {
-    // right
-    0.5f, -0.5f, -0.5f,
-    0.5f,  0.5f, -0.5f,
-    0.5f,  0.5f,  0.5f,
-    0.5f, -0.5f,  0.5f,
+    // right 0
+    0.5f, -0.5f, -0.5f,     1.0f, 0.0f, 0.0f,
+    0.5f,  0.5f, -0.5f,     1.0f, 0.0f, 0.0f,
+    0.5f,  0.5f,  0.5f,     1.0f, 0.0f, 0.0f,
+    0.5f, -0.5f,  0.5f,     1.0f, 0.0f, 0.0f,
     
-    // top
-    0.5f,  0.5f, -0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f,  0.5f,  0.5f,
-    0.5f,  0.5f,  0.5f,
+    // top 4
+    0.5f,  0.5f, -0.5f,     0.0f, 1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,     0.0f, 1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,     0.0f, 1.0f, 0.0f,
+    0.5f,  0.5f,  0.5f,     0.0f, 1.0f, 0.0f,
     
-    // left
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
+    // left 8
+    -0.5f,  0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,
     
-    // bottom
-    -0.5f, -0.5f, -0.5f,
-    0.5f, -0.5f, -0.5f,
-    0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
+    // bottom 12
+    -0.5f, -0.5f, -0.5f,     0.0f, -1.0f, 0.0f,
+    0.5f, -0.5f, -0.5f,     0.0f, -1.0f, 0.0f,
+    0.5f, -0.5f,  0.5f,     0.0f, -1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,     0.0f, -1.0f, 0.0f,
     
-    // front
-    0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
-    0.5f, -0.5f,  0.5f,
+    // front 16
+    0.5f,  0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
+    0.5f, -0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
     
-    // back
-    0.5f,  0.5f, -0.5f,
-    0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f,  0.5f, -0.5f,
+    // back 20
+    0.5f,  0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
+    0.5f, -0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
+    -0.5f, -0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
+    -0.5f,  0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
 };
 
 GLuint CubeIndicesData[36] =
@@ -170,16 +148,20 @@ GLuint CubeIndicesData[36] =
     
     // Bind the attribute pointers to the VAO
     GLint attribute;
-    GLsizei stride = sizeof(GLfloat) * 3;
+    GLsizei stride = sizeof(GLfloat) * 6;
     glGenVertexArraysOES( 1, &_VAO );
     glBindVertexArrayOES( _VAO );
     
     glBindBuffer( GL_ARRAY_BUFFER, _verticesVBO );
     
-    attribute = glGetAttribLocation(_program, "Position");
+    attribute = glGetAttribLocation(_program, "VertexPosition");
+    glEnableVertexAttribArray(attribute);
+    glVertexAttribPointer(attribute, 3, GL_FLOAT, GL_FALSE, stride, NULL);
+
+    attribute = glGetAttribLocation(_program, "VertexNormal");
     glEnableVertexAttribArray( attribute );
-    glVertexAttribPointer( attribute, 3, GL_FLOAT, GL_FALSE, stride, NULL );
-    
+    glVertexAttribPointer( attribute, 3, GL_FLOAT, GL_FALSE, stride, BUFFER_OFFSET( stride/2 ) );
+
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, _indicesVBO );
     
     glBindVertexArrayOES( 0 );
@@ -187,6 +169,25 @@ GLuint CubeIndicesData[36] =
     _modelViewMatrix = GLKMatrix4MakeLookAt(2.0f, 2.0f, 4.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
     _projectionMatrix = GLKMatrix4MakePerspective(45.0f, (float)width/(float)height, 0.01f, 100.0f);
 
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(Tapped:)];
+    tap.numberOfTapsRequired = 2;
+    [view addGestureRecognizer:tap];
+
+}
+
+-(void)Tapped:(UITapGestureRecognizer*)sender
+{
+    if(sender.state == UIGestureRecognizerStateEnded)
+    {
+        _autoRotate = !_autoRotate;
+        if (_autoRotate) {
+            _cursor = 0.05;
+        }
+        else
+        {
+            _cursor = 0;
+        }
+    }
 }
 
 -(void)createProgram
@@ -302,11 +303,29 @@ GLuint CubeIndicesData[36] =
     glBindVertexArrayOES( _VAO );
     glUseProgram( _program );
     
-    for (int i = 0; i < _uniformArraySize; i++) {
-        if (!strcmp(_uniformArray[i].Name, "ModelViewProjectionMatrix")) {
-            // Multiply the transformation matrices together
-            GLKMatrix4 modelViewProjectionMatrix = GLKMatrix4Multiply(_projectionMatrix, _modelViewMatrix);
-            glUniformMatrix4fv(_uniformArray[i].Location, 1, GL_FALSE, modelViewProjectionMatrix.m);
+    for (int i = 0; i < _uniformArraySize; i++)
+    {
+        if (!strcmp(_uniformArray[i].Name, "ModelViewMatrix"))
+        {
+            glUniformMatrix4fv(_uniformArray[i].Location, 1, GL_FALSE, _modelViewMatrix.m);
+        }
+        else if (!strcmp(_uniformArray[i].Name, "ProjectionMatrix"))
+        {
+            glUniformMatrix4fv(_uniformArray[i].Location, 1, GL_FALSE, _projectionMatrix.m);
+        }
+        else if (!strcmp(_uniformArray[i].Name, "NormalMatrix"))
+        {
+            bool success;
+            GLKMatrix4 normalMatrix4 = GLKMatrix4InvertAndTranspose(_modelViewMatrix, &success);
+            if (success) {
+                GLKMatrix3 normalMatrix3 = GLKMatrix4GetMatrix3(normalMatrix4);
+                glUniformMatrix3fv(_uniformArray[i].Location, 1, GL_FALSE, normalMatrix3.m);
+            }
+        }
+        else if (!strcmp(_uniformArray[i].Name, "LightPosition"))
+        {
+            GLKVector3 l = GLKVector3Make(0.0f , 0.0f, 0.0f);
+            glUniform3fv(_uniformArray[i].Location, 1, l.v);
         }
     }
     
@@ -316,7 +335,7 @@ GLuint CubeIndicesData[36] =
 
 - (void)update
 {
-    
+    _modelViewMatrix = GLKMatrix4RotateY(_modelViewMatrix, _cursor);
 }
 
 - (void)viewDidUnload
@@ -344,97 +363,5 @@ GLuint CubeIndicesData[36] =
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
-
-//- (void)viewDidLoad
-//{
-//    [super viewDidLoad];
-//    
-//    self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-//    
-//    if (!self.context) {
-//        NSLog(@"Failed to create ES context");
-//    }
-//    
-//    GLKView *view = (GLKView *)self.view;
-//    view.context = self.context;
-//    [self setupGL];
-//}
-//
-//- (void)setupGL {
-//    
-//    [EAGLContext setCurrentContext:self.context];
-//    
-//    glGenBuffers(1, &_vertexBuffer);
-//    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
-//    
-//    glGenBuffers(1, &_indexBuffer);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
-//    
-//    self.effect = [[GLKBaseEffect alloc] init];
-//
-//    self.view.drawableDepthFormat = GLKViewDrawableDepthFormat16;
-//    
-//    // Enable face culling and depth test
-//    glEnable( GL_DEPTH_TEST );
-//    glEnable( GL_CULL_FACE  );
-//    
-//    // Set up the viewport
-//    int width = view.bounds.size.width;
-//    int height = view.bounds.size.height;
-//    glViewport(0, 0, width, height);
-//
-//}
-//
-//- (void)tearDownGL {
-//    
-//    [EAGLContext setCurrentContext:self.context];
-//    
-//    glDeleteBuffers(1, &_vertexBuffer);
-//    glDeleteBuffers(1, &_indexBuffer);
-//    
-//    self.effect = nil;
-//
-//}
-//
-//#pragma mark - GLKViewDelegate
-//
-//- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect {
-//    
-//    glClearColor(1.0, 0.0, 0.0, 1.0);
-//    glClear(GL_COLOR_BUFFER_BIT);
-//    [self.effect prepareToDraw];
-//    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-//    
-//    glEnableVertexAttribArray(GLKVertexAttribPosition);
-//    glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *) offsetof(Vertex, Position));
-//    glEnableVertexAttribArray(GLKVertexAttribColor);
-//    glVertexAttribPointer(GLKVertexAttribColor, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *) offsetof(Vertex, Color));
-//    glDrawElements(GL_TRIANGLES, sizeof(Indices)/sizeof(Indices[0]), GL_UNSIGNED_BYTE, 0);
-//    
-//}
-//
-//-(void)update {
-//    float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
-//    GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), aspect, 4.0f, 10.0f);
-//    self.effect.transform.projectionMatrix = projectionMatrix;
-//    GLKMatrix4 modelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, -6.0f);
-//    _rotation += 90 * self.timeSinceLastUpdate;
-//    modelViewMatrix = GLKMatrix4Rotate(modelViewMatrix, GLKMathDegreesToRadians(_rotation), -GLKMathDegreesToRadians(_rotation), 0, 1);
-//    self.effect.transform.modelviewMatrix = modelViewMatrix;
-//}
-//
-//- (void)viewDidUnload
-//{
-//    [super viewDidUnload];
-//    [self tearDownGL];
-//    
-//    if ([EAGLContext currentContext] == self.context) {
-//        [EAGLContext setCurrentContext:nil];
-//    }
-//    self.context = nil;
-//}
 
 @end
