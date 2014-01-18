@@ -7,7 +7,10 @@
 //
 
 #import <GLKit/GLKit.h>
+#import "SCTriangleStripCreator.h"
 
 @interface ScannerGLKViewController : GLKViewController
+
+@property (nonatomic, strong) SCTriangleStripCreator *triangleData;
 
 @end

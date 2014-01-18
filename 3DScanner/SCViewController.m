@@ -9,6 +9,8 @@
 #import "SCViewController.h"
 @import AVFoundation;
 #import "SCBitmapData.h"
+#import "ScannerGLKViewController.h"
+#import "SCTriangleStripCreator.h"
 @import GLKit;
 @import OpenGLES;
 
@@ -19,6 +21,8 @@
 @property (weak, nonatomic) IBOutlet UIView *videoPreviewView;
 @property (nonatomic) BOOL isProcessingSampleFrame;
 @property (nonatomic, strong) SCBitmapData *bitmapAnalyzer;
+
+@property (nonatomic, assign) CGPoint3D ** triangles;
 
 @end
 
@@ -134,15 +138,20 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 }
 
 - (IBAction)renderButtonPressed:(UIButton *)sender {
-    CGPoint3D ** triangles = [self.bitmapAnalyzer generateTriangleData];
+    self.triangles = [self.bitmapAnalyzer generateTriangleData];
     [self performSegueWithIdentifier:@"renderSegue" sender:self];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:@"renderSegue"]) {
-        
+        ScannerGLKViewController * vc = (ScannerGLKViewController*)segue.destinationViewController;
+        vc.triangleData = [[SCTriangleStripCreator alloc] init];
+        vc.triangleData.numberOfLinesGiven = self.bitmapAnalyzer.imageCount;
+        vc.triangleData.lengthOfPointsOnLine = self.bitmapAnalyzer.imageWidth;
+        vc.triangleData.pointsArrayOfLines = self.triangles;
     }
+    [super prepareForSegue:segue sender:sender];
 }
 
 

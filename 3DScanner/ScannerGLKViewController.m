@@ -34,65 +34,65 @@ typedef struct
 @property (strong, nonatomic) GLKBaseEffect *effect;
 @end
 
-GLfloat CubeVertexData[144] =
-{
-    // right 0
-    0.5f, -0.5f, -0.5f,     1.0f, 0.0f, 0.0f,
-    0.5f,  0.5f, -0.5f,     1.0f, 0.0f, 0.0f,
-    0.5f,  0.5f,  0.5f,     1.0f, 0.0f, 0.0f,
-    0.5f, -0.5f,  0.5f,     1.0f, 0.0f, 0.0f,
-    
-    // top 4
-    0.5f,  0.5f, -0.5f,     0.0f, 1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,     0.0f, 1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,     0.0f, 1.0f, 0.0f,
-    0.5f,  0.5f,  0.5f,     0.0f, 1.0f, 0.0f,
-    
-    // left 8
-    -0.5f,  0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,
-    
-    // bottom 12
-    -0.5f, -0.5f, -0.5f,     0.0f, -1.0f, 0.0f,
-    0.5f, -0.5f, -0.5f,     0.0f, -1.0f, 0.0f,
-    0.5f, -0.5f,  0.5f,     0.0f, -1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,     0.0f, -1.0f, 0.0f,
-    
-    // front 16
-    0.5f,  0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
-    0.5f, -0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
-    
-    // back 20
-    0.5f,  0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
-    0.5f, -0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
-    -0.5f, -0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
-    -0.5f,  0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
-};
-
-GLuint CubeIndicesData[36] =
-{
-    // right
-    0, 1, 2,        2, 3, 0,
-    
-    // top
-    4, 5, 6,        6, 7, 4,
-    
-    // left
-    8, 9, 10,       10, 11, 8,
-    
-    // bottom
-    12, 13, 14,     14, 15, 12,
-    
-    // front
-    16, 17, 18,     18, 19, 16,
-    
-    // back
-    20, 21, 22,     22, 23, 20
-};
+//GLfloat CubeVertexData[144] =
+//{
+//    // right 0
+//    0.5f, -0.5f, -0.5f,     1.0f, 0.0f, 0.0f,
+//    0.5f,  0.5f, -0.5f,     1.0f, 0.0f, 0.0f,
+//    0.5f,  0.5f,  0.5f,     1.0f, 0.0f, 0.0f,
+//    0.5f, -0.5f,  0.5f,     1.0f, 0.0f, 0.0f,
+//    
+//    // top 4
+//    0.5f,  0.5f, -0.5f,     0.0f, 1.0f, 0.0f,
+//    -0.5f,  0.5f, -0.5f,     0.0f, 1.0f, 0.0f,
+//    -0.5f,  0.5f,  0.5f,     0.0f, 1.0f, 0.0f,
+//    0.5f,  0.5f,  0.5f,     0.0f, 1.0f, 0.0f,
+//    
+//    // left 8
+//    -0.5f,  0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,
+//    -0.5f, -0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,
+//    -0.5f, -0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,
+//    -0.5f,  0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,
+//    
+//    // bottom 12
+//    -0.5f, -0.5f, -0.5f,     0.0f, -1.0f, 0.0f,
+//    0.5f, -0.5f, -0.5f,     0.0f, -1.0f, 0.0f,
+//    0.5f, -0.5f,  0.5f,     0.0f, -1.0f, 0.0f,
+//    -0.5f, -0.5f,  0.5f,     0.0f, -1.0f, 0.0f,
+//    
+//    // front 16
+//    0.5f,  0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
+//    -0.5f,  0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
+//    -0.5f, -0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
+//    0.5f, -0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
+//    
+//    // back 20
+//    0.5f,  0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
+//    0.5f, -0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
+//    -0.5f, -0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
+//    -0.5f,  0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
+//};
+//
+//GLuint CubeIndicesData[36] =
+//{
+//    // right
+//    0, 1, 2,        2, 3, 0,
+//    
+//    // top
+//    4, 5, 6,        6, 7, 4,
+//    
+//    // left
+//    8, 9, 10,       10, 11, 8,
+//    
+//    // bottom
+//    12, 13, 14,     14, 15, 12,
+//    
+//    // front
+//    16, 17, 18,     18, 19, 16,
+//    
+//    // back
+//    20, 21, 22,     22, 23, 20
+//};
 
 
 @implementation ScannerGLKViewController
@@ -137,13 +137,13 @@ GLuint CubeIndicesData[36] =
     // Make the vertex buffer
     glGenBuffers( 1, &_verticesVBO );
     glBindBuffer( GL_ARRAY_BUFFER, _verticesVBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(CubeVertexData), CubeVertexData, GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(self.triangleData.vertexArray), self.triangleData.vertexArray, GL_STATIC_DRAW );
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     
     // Make the indices buffer
     glGenBuffers( 1, &_indicesVBO );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, _indicesVBO );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(CubeIndicesData), CubeIndicesData, GL_STATIC_DRAW );
+    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(self.triangleData.indexArray), self.triangleData.indexArray, GL_STATIC_DRAW );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     
     // Bind the attribute pointers to the VAO
@@ -330,7 +330,7 @@ GLuint CubeIndicesData[36] =
     }
     
     // Draw!
-    glDrawElements( GL_TRIANGLES, sizeof(CubeIndicesData)/sizeof(GLuint), GL_UNSIGNED_INT, NULL );
+    glDrawElements( GL_TRIANGLES, sizeof(self.triangleData.indexArray)/sizeof(GLuint), GL_UNSIGNED_INT, NULL );
 }
 
 - (void)update
