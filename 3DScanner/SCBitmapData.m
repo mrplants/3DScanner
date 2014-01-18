@@ -48,16 +48,17 @@ Color colorAtlocation(CGPoint point, uint8_t* data, CGSize resolution)
 
 -(NSArray *)extractRedValueHeightDifferences
 {
-    NSMutableArray *heights;
+    NSMutableArray *heights = [[NSMutableArray alloc] init];
     CGPoint point;
     int maxRed = 0;
     float minHeight = self.resolution.width, currentHeight;
     self.imageWidth = self.resolution.height;
     
     // Finds pixel with max red in each row and the overall minimun x value for a max red
-    for (int i = 0; i <= self.resolution.height; i++) // for each row
+    for (int i = 0; i < self.resolution.height; i++) // for each row
     {
-        for (int j = 0; j <= self.resolution.width; j++) // for each pixel in that row
+        maxRed = 0;
+        for (int j = 0; j < self.resolution.width; j++) // for each pixel in that row
         {
             // Find max red in that row, store its height
             point.x = j;
@@ -67,19 +68,19 @@ Color colorAtlocation(CGPoint point, uint8_t* data, CGSize resolution)
             {
                 maxRed = currentColors.red; // Worry about =?
                 currentHeight = (float)j; // Save in case it's the minimun height overall
-                heights[i] = [NSNumber numberWithFloat:currentHeight]; // Also store in array for later
             }
         }
+        [heights addObject:[NSNumber numberWithFloat:currentHeight]]; // Also store in array for later
         // check for new minimun x value for a max red value
         if (currentHeight < minHeight) minHeight = currentHeight;
     }
     
     // Find the relative height value of each
-    for (int i = 0; i <= self.resolution.width; i++) // TODO should this be < ?
+    for (int i = 0; i < self.resolution.width; i++)
     {
         heights[i] = [NSNumber numberWithFloat:[heights[i] floatValue] - minHeight];
     }
-    [self.heightValues addObject:[heights copy]];
+    self.heightValues = [heights copy];
     self.imageCount++;
     return [heights copy];
 }
@@ -100,10 +101,21 @@ Color colorAtlocation(CGPoint point, uint8_t* data, CGSize resolution)
         // for each point in the line
         for (int j = 0; j < self.imageWidth; j++) // TODO should this be <= ?
         {
-            point.x = (float)j; // Image number
+            point.x = j; // Image number
             point.y = [self.heightValues[j] floatValue]; // "Height" value of the reddest point in that row
-            point.z = (float)i; // Point in line from that image
+            point.z = i; // Point in line from that image
             triangles[i][j] = point;
+        }
+    }
+
+    NSMutableArray * tempX = [[NSMutableArray alloc] init];
+    NSMutableArray * tempY = [[NSMutableArray alloc] init];
+    NSMutableArray * tempZ = [[NSMutableArray alloc] init];
+    for (int i = 0; i < self.imageCount; i++) {
+        for (int j = 0; j < self.imageWidth; j++) {
+            [tempX  addObject:[NSNumber numberWithFloat:triangles[i][j].x]];
+            [tempY  addObject:[NSNumber numberWithFloat:triangles[i][j].y]];
+            [tempZ  addObject:[NSNumber numberWithFloat:triangles[i][j].z]];
         }
     }
     return triangles;

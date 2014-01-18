@@ -43,8 +43,34 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
     free(_indexArray);
 }
 
+-(void)scalePoints {
+    //find max and create proportion
+    float max = 0;
+    for (int i = 0; i < self.numberOfLinesGiven; i++) {
+        for (int j = 0; j < self.lengthOfPointsOnLine; j++) {
+            if (max < ABS(self.pointsArrayOfLines[i][j].x)) {
+                max = self.pointsArrayOfLines[i][j].x;
+            }
+            if (max < ABS(self.pointsArrayOfLines[i][j].y)) {
+                max = self.pointsArrayOfLines[i][j].y;
+            }
+            if (max < ABS(self.pointsArrayOfLines[i][j].z)) {
+                max = self.pointsArrayOfLines[i][j].z;
+            }
+        }
+    }
+    float proportion = ABS(0.5/max);
+    for (int i = 0; i < self.numberOfLinesGiven; i++) {
+        for (int j = 0; j < self.lengthOfPointsOnLine; j++) {
+            self.pointsArrayOfLines[i][j].x *= proportion;
+            self.pointsArrayOfLines[i][j].y *= proportion;
+            self.pointsArrayOfLines[i][j].z *= proportion;
+        }
+    }
+}
+
 - (void)calculate {
-    
+    [self scalePoints];
     self.lengthOfVertexArray = self.numberOfLinesGiven * self.lengthOfPointsOnLine * 6;
     self.lengthOfIndexArray = (self.numberOfLinesGiven - 1) * (self.lengthOfPointsOnLine - 1) * 2 * 3;
     self.vertexArray = malloc(self.numberOfLinesGiven * self.lengthOfPointsOnLine * 6 * sizeof(GLfloat));
@@ -85,6 +111,22 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
 //            self.indexArray[counterForIndexArray++] = (x + 1) * self.lengthOfPointsOnLine + y;
         }
     }
+    
+    NSMutableArray *tempIndexArray = [[NSMutableArray alloc] init];
+    for (int i = 0; i < self.lengthOfIndexArray; i++) {
+        [tempIndexArray addObject:[NSNumber numberWithFloat:self.indexArray[i]]];
+    }
+    NSMutableArray *tempVertexArray = [[NSMutableArray alloc] init];
+    for (int i = 0; i < self.lengthOfVertexArray; i++) {
+        [tempVertexArray addObject:[NSNumber numberWithFloat:self.vertexArray[i]]];
+    }
+    
+    
+//    free(self.vertexArray);
+//    free(self.indexArray);
+//    self.vertexArray = malloc(sizeof(float) * 3 * 6);
+//    self.indexArray = malloc(sizeof(float) *3);
+//    self.vertexArray[0]
 }
 
 CGPoint3D crossProductWithThreePoints(CGPoint3D root, CGPoint3D right, CGPoint3D left) {

@@ -22,7 +22,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wYR-Xa-5H8">
-                                <rect key="frame" x="143" y="530" width="35" height="30"/>
+                                <rect key="frame" x="143" y="72" width="35" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Push">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -34,9 +34,9 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="FFD-GP-dvr" firstAttribute="top" secondItem="wYR-Xa-5H8" secondAttribute="bottom" constant="20" symbolic="YES" id="1Dl-US-4bT"/>
                             <constraint firstItem="nrk-7x-4fv" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="4oo-dw-hrh"/>
                             <constraint firstAttribute="centerX" secondItem="wYR-Xa-5H8" secondAttribute="centerX" id="5dg-2s-T18"/>
+                            <constraint firstItem="wYR-Xa-5H8" firstAttribute="top" secondItem="pcs-2B-Uv8" secondAttribute="bottom" constant="20" symbolic="YES" id="Usp-Vu-FH8"/>
                             <constraint firstAttribute="trailing" secondItem="nrk-7x-4fv" secondAttribute="trailing" id="d81-cF-5sN"/>
                             <constraint firstItem="nrk-7x-4fv" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="noh-eh-eMA"/>
                             <constraint firstItem="FFD-GP-dvr" firstAttribute="top" secondItem="nrk-7x-4fv" secondAttribute="bottom" id="t1C-Z6-bgI"/>
