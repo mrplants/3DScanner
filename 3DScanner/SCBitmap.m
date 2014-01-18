@@ -8,6 +8,12 @@
 
 #import "SCBitmap.h"
 
+typedef struct Color {
+    int red;
+    int green;
+    int blue;
+} Color;
+
 @implementation SCBitmap
 
 -(void)dealloc
@@ -138,9 +144,15 @@
 	}
 }
 
--(CGFloat) getColorAtPoint:(CGPoint)point
+-(Color) getColorAtPoint:(CGPoint)point
 {
     int index;
+    Color pixelColor;
+    
+    // TODO should handle erroneous input better
+    pixelColor.red = -1;
+    pixelColor.green = -1;
+    pixelColor.blue = -1;
     
     if (self.data != NULL)
     {
@@ -149,11 +161,13 @@
         {
             // TODO What value should go into the array? How do I access the coordinate?
             index = (point.x + point.y * self.resolution.width) * 4;
-            return self.data[index+1];
+            pixelColor.red = self.data[index+1];
+            pixelColor.green = self.data[index+2];
+            pixelColor.blue = self.data[index+3];
         }
         
     }
-    return -1; // TODO should handle erroneous input better
+    return pixelColor;
 }
 
 +(uint8_t *) convertARGBPixelBufferToLuminanceBuffer:(CVPixelBufferRef) pixelBuffer
