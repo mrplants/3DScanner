@@ -9,14 +9,21 @@
 #import "SCViewController.h"
 @import AVFoundation;
 #import "SCBitmapData.h"
+@import GLKit;
+@import OpenGLES;
 
-@interface SCViewController () <AVCaptureVideoDataOutputSampleBufferDelegate>
+@interface SCViewController () <AVCaptureVideoDataOutputSampleBufferDelegate, GLKViewDelegate> {
+    float _curRed;
+    BOOL _increasing;
+}
 
 @property (nonatomic, strong) AVCaptureSession *videoCaptureSession;
 @property (nonatomic, strong) AVCaptureDevice *videoCaptureDevice;
 @property (weak, nonatomic) IBOutlet UIView *videoPreviewView;
 @property (nonatomic) BOOL isProcessingSampleFrame;
 @property (nonatomic, strong) SCBitmapData *bitmapAnalyzer;
+
+@property (weak, nonatomic) IBOutlet GLKView *threeDimView;
 
 @end
 
@@ -28,6 +35,33 @@
     [self setupVideoCamera];
     self.bitmapAnalyzer = [[SCBitmapData alloc] init];
     [self.videoCaptureSession startRunning];
+    
+    EAGLContext * context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2]; // 1
+    self.threeDimView.context = context; // 3
+    _increasing = YES;
+    _curRed = 0.0;
+    self.threeDimView.delegate = self; // 4
+}
+
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect {
+    
+    if (_increasing) {
+        _curRed += 0.01;
+    } else {
+        _curRed -= 0.01;
+    }
+    if (_curRed >= 1.0) {
+        _curRed = 1.0;
+        _increasing = NO;
+    }
+    if (_curRed <= 0.0) {
+        _curRed = 0.0;
+        _increasing = YES;
+    }
+    
+    glClearColor(_curRed, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+//    [self.threeDimView setNeedsDisplay];
 }
 
 - (void) setupVideoCamera

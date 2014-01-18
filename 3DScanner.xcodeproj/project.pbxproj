@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14397D9E188A69C10014CB27 /* ScannerGLKViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14397D9D188A69C10014CB27 /* ScannerGLKViewController.m */; };
 		14EA1246188A27DA005AED52 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1245188A27DA005AED52 /* Foundation.framework */; };
 		14EA1248188A27DA005AED52 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1247188A27DA005AED52 /* CoreGraphics.framework */; };
 		14EA124A188A27DA005AED52 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1249188A27DA005AED52 /* UIKit.framework */; };
@@ -21,8 +22,9 @@
 		14EA1267188A27DA005AED52 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1249188A27DA005AED52 /* UIKit.framework */; };
 		14EA126F188A27DA005AED52 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 14EA126D188A27DA005AED52 /* InfoPlist.strings */; };
 		14EA1271188A27DA005AED52 /* _DScannerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 14EA1270188A27DA005AED52 /* _DScannerTests.m */; };
-		14EA127D188A2B36005AED52 /* SCBitmap.m in Sources */ = {isa = PBXBuildFile; fileRef = 14EA127C188A2B36005AED52 /* SCBitmap.m */; };
 		14EA1283188A4E97005AED52 /* SCBitmapData.m in Sources */ = {isa = PBXBuildFile; fileRef = 14EA1282188A4E97005AED52 /* SCBitmapData.m */; };
+		14EA1285188A637A005AED52 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1284188A637A005AED52 /* GLKit.framework */; };
+		14EA1287188A6381005AED52 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1286188A6381005AED52 /* OpenGLES.framework */; };
 		6A567B8E188A354700CD173B /* SCImageHeightExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A567B8D188A354700CD173B /* SCImageHeightExtractor.m */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		14397D9C188A69C10014CB27 /* ScannerGLKViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerGLKViewController.h; sourceTree = "<group>"; };
+		14397D9D188A69C10014CB27 /* ScannerGLKViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerGLKViewController.m; sourceTree = "<group>"; };
 		14EA1242188A27DA005AED52 /* 3DScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 3DScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		14EA1245188A27DA005AED52 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		14EA1247188A27DA005AED52 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -56,10 +60,10 @@
 		14EA126C188A27DA005AED52 /* 3DScannerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "3DScannerTests-Info.plist"; sourceTree = "<group>"; };
 		14EA126E188A27DA005AED52 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		14EA1270188A27DA005AED52 /* _DScannerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _DScannerTests.m; sourceTree = "<group>"; };
-		14EA127B188A2B36005AED52 /* SCBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCBitmap.h; sourceTree = "<group>"; };
-		14EA127C188A2B36005AED52 /* SCBitmap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCBitmap.m; sourceTree = "<group>"; };
 		14EA1281188A4E97005AED52 /* SCBitmapData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCBitmapData.h; sourceTree = "<group>"; };
 		14EA1282188A4E97005AED52 /* SCBitmapData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCBitmapData.m; sourceTree = "<group>"; };
+		14EA1284188A637A005AED52 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		14EA1286188A6381005AED52 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		6A567B8C188A354700CD173B /* SCImageHeightExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCImageHeightExtractor.h; sourceTree = "<group>"; };
 		6A567B8D188A354700CD173B /* SCImageHeightExtractor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCImageHeightExtractor.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,6 +73,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14EA1287188A6381005AED52 /* OpenGLES.framework in Frameworks */,
+				14EA1285188A637A005AED52 /* GLKit.framework in Frameworks */,
 				14EA1248188A27DA005AED52 /* CoreGraphics.framework in Frameworks */,
 				14EA124A188A27DA005AED52 /* UIKit.framework in Frameworks */,
 				14EA1246188A27DA005AED52 /* Foundation.framework in Frameworks */,
@@ -110,6 +116,8 @@
 		14EA1244188A27DA005AED52 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				14EA1286188A6381005AED52 /* OpenGLES.framework */,
+				14EA1284188A637A005AED52 /* GLKit.framework */,
 				14EA1245188A27DA005AED52 /* Foundation.framework */,
 				14EA1247188A27DA005AED52 /* CoreGraphics.framework */,
 				14EA1249188A27DA005AED52 /* UIKit.framework */,
@@ -125,6 +133,8 @@
 				14EA1254188A27DA005AED52 /* SCAppDelegate.h */,
 				14EA1255188A27DA005AED52 /* SCAppDelegate.m */,
 				14EA1257188A27DA005AED52 /* Main.storyboard */,
+				14397D9C188A69C10014CB27 /* ScannerGLKViewController.h */,
+				14397D9D188A69C10014CB27 /* ScannerGLKViewController.m */,
 				14EA125A188A27DA005AED52 /* SCViewController.h */,
 				14EA125B188A27DA005AED52 /* SCViewController.m */,
 				14EA125D188A27DA005AED52 /* Images.xcassets */,
@@ -167,8 +177,6 @@
 			children = (
 				14EA1281188A4E97005AED52 /* SCBitmapData.h */,
 				14EA1282188A4E97005AED52 /* SCBitmapData.m */,
-				14EA127B188A2B36005AED52 /* SCBitmap.h */,
-				14EA127C188A2B36005AED52 /* SCBitmap.m */,
 				6A567B8C188A354700CD173B /* SCImageHeightExtractor.h */,
 				6A567B8D188A354700CD173B /* SCImageHeightExtractor.m */,
 			);
@@ -273,12 +281,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				14EA127D188A2B36005AED52 /* SCBitmap.m in Sources */,
 				14EA1256188A27DA005AED52 /* SCAppDelegate.m in Sources */,
 				14EA1283188A4E97005AED52 /* SCBitmapData.m in Sources */,
 				6A567B8E188A354700CD173B /* SCImageHeightExtractor.m in Sources */,
 				14EA125C188A27DA005AED52 /* SCViewController.m in Sources */,
 				14EA1252188A27DA005AED52 /* main.m in Sources */,
+				14397D9E188A69C10014CB27 /* ScannerGLKViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
