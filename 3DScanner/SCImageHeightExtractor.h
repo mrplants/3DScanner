@@ -11,7 +11,18 @@
 #import "SCBitmap.h"
 
 @interface SCImageHeightExtractor : NSObject
+@property (nonatomic) NSMutableArray *heightValues;
+@property (nonatomic) int imageCount;
+@property (nonatomic) int imageWidth;
+
+typedef struct CGPoint3D {
+    float x;
+    float y;
+    float z;
+} CGPoint3D;
 
 -(NSArray *)extractRedValueHeightDifferencesFromBitmap:(SCBitmap *)bitmap;
+
+-(CGPoint3D **)generateTriangleData;
 
 @end

@@ -10,12 +10,14 @@
 
 @implementation SCImageHeightExtractor
 
+
 -(NSArray *)extractRedValueHeightDifferencesFromBitmap:(SCBitmap *)bitmap
 {
-    NSMutableArray *heightValues;
+    NSMutableArray *heights;
     CGPoint point;
     int maxRed = 0;
     float minHeight = bitmap.resolution.width, currentHeight;
+    self.imageWidth = bitmap.resolution.height;
     
     // Finds pixel with max red in each row and the overall minimun x value for a max red
     for (int i = 0; i <= bitmap.resolution.height; i++) // for each row
@@ -30,7 +32,7 @@
             {
                 maxRed = currentColors.red; // Worry about =?
                 currentHeight = (float)j; // Save in case it's the minimun height overall
-                heightValues[i] = [NSNumber numberWithFloat:currentHeight]; // Also store in array for later
+                heights[i] = [NSNumber numberWithFloat:currentHeight]; // Also store in array for later
             }
         }
         // check for new minimun x value for a max red value
@@ -38,11 +40,38 @@
     }
     
     // Find the relative height value of each
-    for (int i = 0; i <= bitmap.resolution.width; i++)
+    for (int i = 0; i <= bitmap.resolution.width; i++) // TODO should this be < ?
     {
-        heightValues[i] = [NSNumber numberWithFloat:[heightValues[i] floatValue] - minHeight];
+        heights[i] = [NSNumber numberWithFloat:[heights[i] floatValue] - minHeight];
     }
-    return [heightValues copy];
+    [self.heightValues addObject:[heights copy]];
+    self.imageCount++;
+    return [heights copy];
+}
+
+-(CGPoint3D **)generateTriangleData
+{
+    CGPoint3D **triangles = malloc(sizeof(CGPoint3D *)*self.imageCount);
+    CGPoint3D point;
+    
+    for (int i = 0; i < self.imageCount; i++)
+    {
+        triangles[i] = malloc(sizeof(CGPoint3D)*self.imageWidth);
+    }
+    
+    // for each image taken (each "line")
+    for (int i = 0; i < self.imageCount; i++)
+    {
+        // for each point in the line
+        for (int j = 0; j < self.imageWidth; j++) // TODO should this be <= ?
+        {
+            point.x = (float)j; // Image number
+            point.y = [self.heightValues[j] floatValue]; // "Height" value of the reddest point in that row
+            point.z = (float)i; // Point in line from that image
+            triangles[i][j] = point;
+        }
+    }
+    return triangles;
 }
 
 @end
