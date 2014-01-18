@@ -72,18 +72,18 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
 - (void)calculate {
     [self scalePoints];
     self.lengthOfVertexArray = self.numberOfLinesGiven * self.lengthOfPointsOnLine * 6;
-    self.lengthOfIndexArray = (self.numberOfLinesGiven - 1) * (self.lengthOfPointsOnLine - 1) * 2 * 3;
-    self.vertexArray = malloc(self.numberOfLinesGiven * self.lengthOfPointsOnLine * 6 * sizeof(GLfloat));
-    self.indexArray = malloc((self.numberOfLinesGiven - 1) * (self.lengthOfPointsOnLine - 1) * 2 * 3 * sizeof(GLuint));
+    self.lengthOfIndexArray = self.lengthOfVertexArray;
+    self.vertexArray = malloc(self.lengthOfVertexArray * sizeof(GLfloat));
+    self.indexArray = malloc(self.lengthOfIndexArray * sizeof(GLuint));
     
     for (int x = 0; x < self.numberOfLinesGiven; x++) {
-        for (int y = 0; y < self.lengthOfPointsOnLine; y+=6) {
+        for (int y = 0; y < self.lengthOfPointsOnLine; y += 6) {
             int index = x * self.lengthOfPointsOnLine + y;
             
             CGPoint3D currentPoint = self.pointsArrayOfLines[x][y];
             self.vertexArray[index] = currentPoint.x;
-            self.vertexArray[index+1] = currentPoint.y;
-            self.vertexArray[index+2] = currentPoint.z;
+            self.vertexArray[index + 1] = currentPoint.y;
+            self.vertexArray[index + 2] = currentPoint.z;
             
             //calculate normal
             CGPoint3D normal = crossProductWithThreePoints(currentPoint,
