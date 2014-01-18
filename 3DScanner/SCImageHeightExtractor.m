@@ -11,7 +11,7 @@
 @implementation SCImageHeightExtractor
 
 
--(NSArray *)extractRedValueHeightDifferencesFromBitmap:(SCBitmap *)bitmap
+-(NSArray *)extractRedValueHeightDifferencesFromBitmap:(SCBitmapData *)bitmap
 {
     NSMutableArray *heights;
     CGPoint point;
@@ -27,7 +27,7 @@
             // Find max red in that row, store its height
             point.x = j;
             point.y = i;
-            Color currentColors = [bitmap getColorAtPoint:point];
+            Color currentColors = colorAtlocation(point, bitmap.imageData, bitmap.resolution); //[bitmap getColorAtPoint:point];
             if (currentColors.red > maxRed)
             {
                 maxRed = currentColors.red; // Worry about =?
