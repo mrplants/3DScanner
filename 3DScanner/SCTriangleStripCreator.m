@@ -11,25 +11,31 @@
 @implementation SCTriangleStripCreator
 
 - (void)setVertexArray:(GLfloat *)vertexArray {
-    free(_vertexArray);
+    if (_vertexArray) free(_vertexArray);
     _vertexArray = vertexArray;
 }
 
 - (void)setIndexArray:(GLuint *)indexArray {
-    free(_indexArray);
+    if (_indexArray) free(_indexArray);
     _indexArray = indexArray;
 }
 
 - (void)dealloc {
     free(_vertexArray);
+    free(_indexArray);
 }
 
 - (void)calculate {
+    
+    self.vertexArray = malloc(self.numberOfLinesGiven * self.lengthOfPointsOnLine * 6 * sizeof(GLfloat));
+    self.indexArray = malloc(self.numberOfLinesGiven * (self.lengthOfPointsOnLine + 2) * sizeof(GLuint));
+    
     for (int x = 0; x < self.numberOfLinesGiven; x++) {
-        
+        // doubling up the first point
         for (int y = 0; y < self.lengthOfPointsOnLine; y++) {
             
         }
+        // doubling up the last point
     }
 }
 
