@@ -130,7 +130,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 		//unlock the pixel buffer - Good practice
         
-        if (self.bitmapAnalyzer.imageCount == 1) {
+        if (self.bitmapAnalyzer.imageCount == 150) {
             dispatch_async(dispatch_get_main_queue(), ^(void){
                 [self renderButtonPressed:nil];
             });

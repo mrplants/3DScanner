@@ -34,43 +34,6 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
         }
         free(_pointsArrayOfLines);
     }
-
-    for (int i = 0; i < self.numberOfLinesGiven; i++) {
-        free(pointsArrayOfLines[i]);
-    }
-    free(pointsArrayOfLines);
-
-    //TESTTESTTESTTESTTEST
-    CGPoint3D pointA;
-    CGPoint3D pointB;
-    CGPoint3D pointC;
-    CGPoint3D pointD;
-    pointA.x = 0;
-    pointA.y = 0;
-    pointA.z = 0;
-    pointB.x = 0.5;
-    pointB.y = 0;
-    pointB.z = 0;
-    pointC.x = 0;
-    pointC.y = 0.5;
-    pointC.z = 0.5;
-    pointD.x = 0.5;
-    pointD.y = 0;
-    pointD.z = 0.5;
-    
-    pointsArrayOfLines = malloc(sizeof(CGPoint3D *) * 2);
-    for (int i = 0; i < 2; i++) {
-        pointsArrayOfLines[i] = malloc(sizeof(CGPoint3D) * 2);
-    }
-    
-    self.numberOfLinesGiven = 2;
-    self.lengthOfPointsOnLine = 2;
-    
-    pointsArrayOfLines[0][0] = pointA;
-    pointsArrayOfLines[0][1] = pointC;
-    pointsArrayOfLines[1][0] = pointB;
-    pointsArrayOfLines[1][1] = pointD;
-    
     _pointsArrayOfLines = pointsArrayOfLines;
     [self calculate];
 }
@@ -108,9 +71,9 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
 
 - (void)calculate {
     [self scalePoints];
-    self.lengthOfVertexArray = self.numberOfLinesGiven * 3 * (self.lengthOfPointsOnLine - 2);
-    self.lengthOfIndexArray = self.lengthOfVertexArray - 2 * self.numberOfLinesGiven;
-    self.vertexArray = malloc(self.lengthOfVertexArray * sizeof(GLfloat) * 6);
+    self.lengthOfVertexArray = self.numberOfLinesGiven * 3 * (self.lengthOfPointsOnLine - 2) * 6;
+    self.lengthOfIndexArray = (self.lengthOfPointsOnLine - 2) * self.numberOfLinesGiven;
+    self.vertexArray = malloc(self.lengthOfVertexArray * sizeof(GLfloat));
     self.indexArray = malloc(self.lengthOfIndexArray * sizeof(GLuint));
     
     
@@ -234,41 +197,41 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
     for (int i = 0; i < self.lengthOfVertexArray; i++) {
         [tempVertexArray addObject:[NSNumber numberWithFloat:self.vertexArray[i]]];
     }
-    
-    
-//    free(self.vertexArray);
-//    free(self.indexArray);
-    self.vertexArray = malloc(sizeof(float) * 3 * 6);
-    self.lengthOfVertexArray = 3 * 6;
-    self.indexArray = malloc(sizeof(uint) *3);
-    self.lengthOfIndexArray = 3;
-    self.vertexArray[0] = 0.0f;
-    self.vertexArray[1] = 0.0f;
-    self.vertexArray[2] = 0.0f;
-    
-    self.vertexArray[3] = 1.0f;
-    self.vertexArray[4] = 0.0f;
-    self.vertexArray[5] = 0.0f;
-    
-    self.vertexArray[6] = 0.0f;
-    self.vertexArray[7] = 0.5f;
-    self.vertexArray[8] = 0.0f;
-    
-    self.vertexArray[9] = 1.0f;
-    self.vertexArray[10] = 0.0f;
-    self.vertexArray[11] = 0.0f;
-    
-    self.vertexArray[12] = 0.0f;
-    self.vertexArray[13] = 0.0f;
-    self.vertexArray[14] = 0.5f;
-    
-    self.vertexArray[15] = 1.0f;
-    self.vertexArray[16] = 0.0f;
-    self.vertexArray[17] = 0.0f;
-    
-    self.indexArray[0] = 0;
-    self.indexArray[1] = 1;
-    self.indexArray[2] = 2;
+//
+//    
+////    free(self.vertexArray);
+////    free(self.indexArray);
+//    self.vertexArray = malloc(sizeof(float) * 3 * 6);
+//    self.lengthOfVertexArray = 3 * 6;
+//    self.indexArray = malloc(sizeof(uint) *3);
+//    self.lengthOfIndexArray = 3;
+//    self.vertexArray[0] = 0.0f;
+//    self.vertexArray[1] = 0.0f;
+//    self.vertexArray[2] = 0.0f;
+//    
+//    self.vertexArray[3] = 1.0f;
+//    self.vertexArray[4] = 0.0f;
+//    self.vertexArray[5] = 0.0f;
+//    
+//    self.vertexArray[6] = 0.0f;
+//    self.vertexArray[7] = 0.5f;
+//    self.vertexArray[8] = 0.0f;
+//    
+//    self.vertexArray[9] = 1.0f;
+//    self.vertexArray[10] = 0.0f;
+//    self.vertexArray[11] = 0.0f;
+//    
+//    self.vertexArray[12] = 0.0f;
+//    self.vertexArray[13] = 0.0f;
+//    self.vertexArray[14] = 0.5f;
+//    
+//    self.vertexArray[15] = 1.0f;
+//    self.vertexArray[16] = 0.0f;
+//    self.vertexArray[17] = 0.0f;
+//    
+//    self.indexArray[0] = 0;
+//    self.indexArray[1] = 1;
+//    self.indexArray[2] = 2;
 }
 
 CGPoint3D crossProductWithThreePoints(CGPoint3D root, CGPoint3D right, CGPoint3D left) {

@@ -48,6 +48,7 @@ Color colorAtlocation(CGPoint point, uint8_t* data, CGSize resolution)
 
 -(NSArray *)extractRedValueHeightDifferences
 {
+    
     NSMutableArray *heights = [[NSMutableArray alloc] init];
     CGPoint point;
     int maxRed = 0;
