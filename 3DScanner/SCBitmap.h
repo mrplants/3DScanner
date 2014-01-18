@@ -18,6 +18,13 @@
 @property (nonatomic) int bytesPerPixel;
 
 @property (nonatomic) uint8_t * data;
+
+typedef struct Color {
+    int red;
+    int green;
+    int blue;
+} Color;
+
 -(void) loadBitmapWithCIImage:(CIImage *) newImageCG;
 -(void) loadBitmapWithCGImage:(CGImageRef)newImage;
 -(void) loadBitmapWithPixelBuffer:(CVPixelBufferRef) pixelBuffer;
@@ -31,6 +38,8 @@
 										toRed:(CGFloat)red
 										green:(CGFloat)green
 										 blue:(CGFloat)blue;
+
+-(Color) getColorAtPoint:(CGPoint)point;
 
 -(UIColor *) getAverageColorInRect:(CGRect) rect;
 
