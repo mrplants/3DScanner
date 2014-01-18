@@ -6,18 +6,25 @@
 //  Copyright (c) 2013 Serim Research. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreGraphics/CoreGraphics.h>
-#import <CoreImage/CoreImage.h>
-#import <QuartzCore/QuartzCore.h>
+@import Foundation;
+@import QuartzCore;
+@import CoreGraphics;
+@import CoreImage;
 
-@interface SEABitmap : NSObject
+@interface SCBitmap : NSObject
 
 @property (nonatomic) CGContextRef context;
 @property (nonatomic) CGSize resolution;
 @property (nonatomic) int bytesPerPixel;
 
 @property (nonatomic) uint8_t * data;
+
+typedef struct Color {
+    int red;
+    int green;
+    int blue;
+} Color;
+
 -(void) loadBitmapWithCIImage:(CIImage *) newImageCG;
 -(void) loadBitmapWithCGImage:(CGImageRef)newImage;
 -(void) loadBitmapWithPixelBuffer:(CVPixelBufferRef) pixelBuffer;
@@ -32,9 +39,9 @@
 										green:(CGFloat)green
 										 blue:(CGFloat)blue;
 
--(UIColor *) getAverageColorInRect:(CGRect) rect;
+-(Color) getColorAtPoint:(CGPoint)point;
 
--(uint8_t *) getLuminanceBuffer;
+-(UIColor *) getAverageColorInRect:(CGRect) rect;
 
 -(CIImage *) getCIImage;
 -(CGImageRef) getCGImage;
@@ -42,7 +49,5 @@
 
 +(UIImage *) imageFromCIImage:(CIImage *) image;
 +(UIImage *) imageFromCGImage:(CGImageRef) image;
-
-+(uint8_t *) convertARGBPixelBufferToLuminanceBuffer:(CVPixelBufferRef) pixelBuffer;
 
 @end
