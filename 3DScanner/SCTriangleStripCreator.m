@@ -113,30 +113,107 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
     self.vertexArray = malloc(self.lengthOfVertexArray * sizeof(GLfloat));
     self.indexArray = malloc(self.lengthOfIndexArray * sizeof(GLuint));
     
+    
+    // one line at a time approach
     for (int x = 0; x < self.numberOfLinesGiven; x++) {
-        for (int y = 0; y < self.lengthOfPointsOnLine; y += 6) {
-            int index = x * self.lengthOfPointsOnLine + y;
-            
-            CGPoint3D currentPoint = self.pointsArrayOfLines[x][y];
-            self.vertexArray[index] = currentPoint.x;
-            self.vertexArray[index + 1] = currentPoint.y;
-            self.vertexArray[index + 2] = currentPoint.z;
-            
+        
+        for (int y = 0; y < self.lengthOfPointsOnLine - 1; y+=2) {
+            CGPoint3D rootPoint, rightPoint, leftPoint;
+            rootPoint = self.pointsArrayOfLines[x][y];
+            rightPoint = self.pointsArrayOfLines[x][y+1];
+            leftPoint = self.pointsArrayOfLines[x][y+2];
             //calculate normal
-            CGPoint3D normal = crossProductWithThreePoints(currentPoint,
-                                                           (y < self.lengthOfPointsOnLine-1) ? self.pointsArrayOfLines[x][y+1] : self.pointsArrayOfLines[x+1][y],
-                                                           (x < self.numberOfLinesGiven-1) ? self.pointsArrayOfLines[x+1][y] : self.pointsArrayOfLines[x][y-1]);
-            self.vertexArray[index+3] = normal.x;
-            self.vertexArray[index+4] = normal.y;
-            self.vertexArray[index+5] = normal.z;
+            CGPoint3D normal = crossProductWithThreePoints(rootPoint, rightPoint, leftPoint);
+
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6)] = rootPoint.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 1] = rootPoint.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 2] = rootPoint.z;
+            
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 3] = normal.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 4] = normal.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 5] = normal.z;
+
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 6] = rightPoint.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 7] = rightPoint.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 8] = rightPoint.z;
+            
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 9] = normal.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 10] = normal.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 11] = normal.z;
+
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 12] = leftPoint.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 13] = leftPoint.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 14] = leftPoint.z;
+            
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 15] = normal.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 16] = normal.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + (y*6) + 17] = normal.z;
+            
+            self.indexArray[(x) * self.numberOfLinesGiven + (y*3)] = (x) * self.numberOfLinesGiven + (y*3);
+            self.indexArray[(x) * self.numberOfLinesGiven + (y*3)+1] = (x) * self.numberOfLinesGiven + (y*3)+1;
+            self.indexArray[(x) * self.numberOfLinesGiven + (y*3)+2] = (x) * self.numberOfLinesGiven + (y*3)+2;
+
+            
+            rootPoint = self.pointsArrayOfLines[x][y+1];
+            leftPoint = self.pointsArrayOfLines[x][y+2];
+            rightPoint = self.pointsArrayOfLines[x][y+3];
+            //calculate normal
+            normal = crossProductWithThreePoints(rootPoint, rightPoint, leftPoint);
+            
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6)] = rootPoint.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 1] = rootPoint.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 2] = rootPoint.z;
+            
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 3] = normal.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 4] = normal.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 5] = normal.z;
+            
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 6] = rightPoint.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 7] = rightPoint.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 8] = rightPoint.z;
+            
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 9] = normal.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 10] = normal.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 11] = normal.z;
+            
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 12] = leftPoint.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 13] = leftPoint.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 14] = leftPoint.z;
+            
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 15] = normal.x;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 16] = normal.y;
+            self.vertexArray[(x) * self.numberOfLinesGiven + ((y+1)*6) + 17] = normal.z;
+
+            self.indexArray[(x) * self.numberOfLinesGiven + (y*3)+4] = (x) * self.numberOfLinesGiven + (y*3)+4;
+            self.indexArray[(x) * self.numberOfLinesGiven + (y*3)+5] = (x) * self.numberOfLinesGiven + (y*3)+5;
+            self.indexArray[(x) * self.numberOfLinesGiven + (y*3)+6] = (x) * self.numberOfLinesGiven + (y*3)+6;
+            
         }
     }
+//            // first triangle: (1, 0), (1, 1), (2, 0)
+//            CGPoint3D currentPoint = self.pointsArrayOfLines[x][y];
+//            self.vertexArray[counterForVertexArray++] = currentPoint.x;
+//            self.vertexArray[counterForVertexArray++] = currentPoint.y;
+//            self.vertexArray[counterForVertexArray++] = currentPoint.z;
+//            
+//            // calculate normal
+//            CGPoint3D normal =
+//            crossProductWithThreePoints(currentPoint,
+//                                        (y < self.lengthOfPointsOnLine-1) ? self.pointsArrayOfLines[x][y+1] : self.pointsArrayOfLines[x+1][y],
+//                                        (x < self.numberOfLinesGiven-1) ? self.pointsArrayOfLines[x+1][y] : self.pointsArrayOfLines[x][y-1]);
+//            self.vertexArray[counterForVertexArray++] = normal.x;
+//            self.vertexArray[counterForVertexArray++] = normal.y;
+//            self.vertexArray[counterForVertexArray++] = normal.z;
+//            
+//
+//        }
+//    }
     
-    int counterForIndexArray = 0;
-    for (uint x = 0; x < self.numberOfLinesGiven - 1; x++) {
-        for (uint y = 0; y < self.lengthOfPointsOnLine - 1; y++) {
-            self.indexArray[counterForIndexArray] = counterForIndexArray;
-            counterForIndexArray++;
+//    int counterForIndexArray = 0;
+//    for (uint x = 0; x < self.numberOfLinesGiven - 1; x++) {
+//        for (uint y = 0; y < self.lengthOfPointsOnLine - 1; y++) {
+//            self.indexArray[counterForIndexArray] = counterForIndexArray;
+//            counterForIndexArray++;
 //            // first triangle: '1_0, 1_1, 2_0'
 //            self.indexArray[counterForIndexArray++] = x * self.lengthOfPointsOnLine + y;
 //            self.indexArray[counterForIndexArray++] = x * self.lengthOfPointsOnLine + y + 1;
@@ -146,8 +223,8 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
 //            self.indexArray[counterForIndexArray++] = x * self.lengthOfPointsOnLine + y + 1;
 //            self.indexArray[counterForIndexArray++] = (x + 1) * self.lengthOfPointsOnLine + y + 1;
 //            self.indexArray[counterForIndexArray++] = (x + 1) * self.lengthOfPointsOnLine + y;
-        }
-    }
+//        }
+//    }
     
     NSMutableArray *tempIndexArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < self.lengthOfIndexArray; i++) {
