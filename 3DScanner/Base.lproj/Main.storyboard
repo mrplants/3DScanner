@@ -21,10 +21,22 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wYR-Xa-5H8">
+                                <rect key="frame" x="143" y="530" width="35" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Push">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="4fc-cq-kU5" kind="push" id="Mym-9Y-mbl"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="FFD-GP-dvr" firstAttribute="top" secondItem="wYR-Xa-5H8" secondAttribute="bottom" constant="20" symbolic="YES" id="1Dl-US-4bT"/>
                             <constraint firstItem="nrk-7x-4fv" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="4oo-dw-hrh"/>
+                            <constraint firstAttribute="centerX" secondItem="wYR-Xa-5H8" secondAttribute="centerX" id="5dg-2s-T18"/>
                             <constraint firstAttribute="trailing" secondItem="nrk-7x-4fv" secondAttribute="trailing" id="d81-cF-5sN"/>
                             <constraint firstItem="nrk-7x-4fv" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="noh-eh-eMA"/>
                             <constraint firstItem="FFD-GP-dvr" firstAttribute="top" secondItem="nrk-7x-4fv" secondAttribute="bottom" id="t1C-Z6-bgI"/>
@@ -33,7 +45,6 @@
                     <navigationItem key="navigationItem" id="jKf-36-2l6"/>
                     <connections>
                         <outlet property="videoPreviewView" destination="nrk-7x-4fv" id="htF-h3-AWk"/>
-                        <segue destination="4fc-cq-kU5" kind="push" id="2pH-Ms-vFm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -43,7 +54,7 @@
         <!--GLKit View Controller - Rendered Object-->
         <scene sceneID="Enu-cv-suO">
             <objects>
-                <glkViewController autoresizesArchivedViewToFullSize="NO" preferredFramesPerSecond="30" id="4fc-cq-kU5" sceneMemberID="viewController">
+                <glkViewController autoresizesArchivedViewToFullSize="NO" preferredFramesPerSecond="30" id="4fc-cq-kU5" customClass="ScannerGLKViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="a4k-sd-so6"/>
                         <viewControllerLayoutGuide type="bottom" id="Lhk-hb-u88"/>
