@@ -8,12 +8,6 @@
 
 #import "SCBitmap.h"
 
-typedef struct Color {
-    int red;
-    int green;
-    int blue;
-} Color;
-
 @implementation SCBitmap
 
 -(void)dealloc
@@ -159,7 +153,6 @@ typedef struct Color {
         // Check that the given coordinates are within the image
         if (point.x <= self.resolution.width && point.x >= 0 && point.y >= 0 && point.y <= self.resolution.height)
         {
-            // TODO What value should go into the array? How do I access the coordinate?
             index = (point.x + point.y * self.resolution.width) * 4;
             pixelColor.red = self.data[index+1];
             pixelColor.green = self.data[index+2];
