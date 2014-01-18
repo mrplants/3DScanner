@@ -21,6 +21,7 @@
 		14EA1267188A27DA005AED52 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1249188A27DA005AED52 /* UIKit.framework */; };
 		14EA126F188A27DA005AED52 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 14EA126D188A27DA005AED52 /* InfoPlist.strings */; };
 		14EA1271188A27DA005AED52 /* _DScannerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 14EA1270188A27DA005AED52 /* _DScannerTests.m */; };
+		14EA127D188A2B36005AED52 /* SEABitmap.m in Sources */ = {isa = PBXBuildFile; fileRef = 14EA127C188A2B36005AED52 /* SEABitmap.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,8 @@
 		14EA126C188A27DA005AED52 /* 3DScannerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "3DScannerTests-Info.plist"; sourceTree = "<group>"; };
 		14EA126E188A27DA005AED52 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		14EA1270188A27DA005AED52 /* _DScannerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _DScannerTests.m; sourceTree = "<group>"; };
+		14EA127B188A2B36005AED52 /* SEABitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SEABitmap.h; sourceTree = "<group>"; };
+		14EA127C188A2B36005AED52 /* SEABitmap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SEABitmap.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +115,7 @@
 		14EA124B188A27DA005AED52 /* 3DScanner */ = {
 			isa = PBXGroup;
 			children = (
+				14EA127A188A2B17005AED52 /* imageManipulation */,
 				14EA1254188A27DA005AED52 /* SCAppDelegate.h */,
 				14EA1255188A27DA005AED52 /* SCAppDelegate.m */,
 				14EA1257188A27DA005AED52 /* Main.storyboard */,
@@ -150,6 +154,15 @@
 				14EA126D188A27DA005AED52 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		14EA127A188A2B17005AED52 /* imageManipulation */ = {
+			isa = PBXGroup;
+			children = (
+				14EA127B188A2B36005AED52 /* SEABitmap.h */,
+				14EA127C188A2B36005AED52 /* SEABitmap.m */,
+			);
+			name = imageManipulation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -250,6 +263,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14EA127D188A2B36005AED52 /* SEABitmap.m in Sources */,
 				14EA1256188A27DA005AED52 /* SCAppDelegate.m in Sources */,
 				14EA125C188A27DA005AED52 /* SCViewController.m in Sources */,
 				14EA1252188A27DA005AED52 /* main.m in Sources */,
