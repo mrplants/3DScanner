@@ -188,6 +188,22 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
 //            self.indexArray[counterForIndexArray++] = (x + 1) * self.lengthOfPointsOnLine + y;
 //        }
 //    }
+    
+    NSMutableArray *tempIndexArray = [[NSMutableArray alloc] init];
+    for (int i = 0; i < self.lengthOfIndexArray; i++) {
+        [tempIndexArray addObject:[NSNumber numberWithFloat:self.indexArray[i]]];
+    }
+    NSMutableArray *tempVertexArray = [[NSMutableArray alloc] init];
+    for (int i = 0; i < self.lengthOfVertexArray; i++) {
+        [tempVertexArray addObject:[NSNumber numberWithFloat:self.vertexArray[i]]];
+    }
+    
+    
+//    free(self.vertexArray);
+//    free(self.indexArray);
+//    self.vertexArray = malloc(sizeof(float) * 3 * 6);
+//    self.indexArray = malloc(sizeof(float) *3);
+//    self.vertexArray[0]
 }
 
 CGPoint3D crossProductWithThreePoints(CGPoint3D root, CGPoint3D right, CGPoint3D left) {
