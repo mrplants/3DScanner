@@ -11,7 +11,7 @@
 
 @interface SCTriangleStripCreator ()
 
-GLKVector3 crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt3);
+CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt3);
 
 @end
 
@@ -51,17 +51,46 @@ GLKVector3 crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D p
     for (int x = 0; x < self.numberOfLinesGiven; x++) {
         // doubling up the first point
         for (int y = 0; y < self.lengthOfPointsOnLine; y++) {
+            int index = x * self.lengthOfPointsOnLine + y;
             
+            CGPoint3D currentPoint = self.pointsArrayOfLines[x][y];
+            self.vertexArray[index] = currentPoint.x;
+            self.vertexArray[index+1] = currentPoint.y;
+            self.vertexArray[index+2] = currentPoint.z;
+            
+            //calculate normal
+            CGPoint3D normal = crossProductWithThreePoints(currentPoint,
+                                                           (y < self.lengthOfPointsOnLine-1) ? self.pointsArrayOfLines[x][y+1] : self.pointsArrayOfLines[x+1][y],
+                                                           (x < self.numberOfLinesGiven-1) ? self.pointsArrayOfLines[x+1][y] : self.pointsArrayOfLines[x+1][y-1]);
+            self.vertexArray[index+3] = normal.x;
+            self.vertexArray[index+4] = normal.y;
+            self.vertexArray[index+5] = normal.z;
         }
         // doubling up the last point
     }
 }
 
-GLKVector3 crossProductWithThreePoints(CGPoint3D root, CGPoint3D right, CGPoint3D left) {
+CGPoint3D crossProductWithThreePoints(CGPoint3D root, CGPoint3D right, CGPoint3D left) {
     GLKVector3 rightVector = GLKVector3Make(right.x - root.x, right.y - root.y, right.z - root.z);
     GLKVector3 leftVector = GLKVector3Make(left.x - root.x, left.y - root.y, left.z - root.z);
     
-    return GLKVector3CrossProduct(leftVector, rightVector);
+    return CGPoint3DMakeWithVector(GLKVector3Normalize(GLKVector3CrossProduct(leftVector, rightVector)));
+}
+
+CGPoint3D CGPoint3DMake(float x, float y, float z) {
+    CGPoint3D returnPoint;
+    returnPoint.x = x;
+    returnPoint.y = y;
+    returnPoint.z = z;
+    return returnPoint;
+}
+
+CGPoint3D CGPoint3DMakeWithVector(GLKVector3 vector) {
+    CGPoint3D returnPoint;
+    returnPoint.x = vector.x;
+    returnPoint.y = vector.y;
+    returnPoint.z = vector.z;
+    return returnPoint;
 }
 
 @end
