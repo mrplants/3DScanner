@@ -72,7 +72,7 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt);
 
 CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
     CGPoint3D newPt;
-    newPt.x = pt.x + 0.05;
+    newPt.x = pt.x + 0.1;
     newPt.y = pt.y;
     newPt.z = pt.z;
     return newPt;
