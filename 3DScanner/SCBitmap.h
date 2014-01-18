@@ -6,12 +6,12 @@
 //  Copyright (c) 2013 Serim Research. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreGraphics/CoreGraphics.h>
-#import <CoreImage/CoreImage.h>
-#import <QuartzCore/QuartzCore.h>
+@import Foundation;
+@import QuartzCore;
+@import CoreGraphics;
+@import CoreImage;
 
-@interface SEABitmap : NSObject
+@interface SCBitmap : NSObject
 
 @property (nonatomic) CGContextRef context;
 @property (nonatomic) CGSize resolution;

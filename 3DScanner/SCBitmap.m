@@ -1,14 +1,14 @@
 //
-//  SEABitmap.m
+//  SCBitmap.m
 //  Serim Explosives Analyzer
 //
 //  Created by Sean Fitzgerald on 4/4/13.
 //  Copyright (c) 2013 Serim Research. All rights reserved.
 //
 
-#import "SEABitmap.h"
+#import "SCBitmap.h"
 
-@implementation SEABitmap
+@implementation SCBitmap
 
 -(void)dealloc
 {
