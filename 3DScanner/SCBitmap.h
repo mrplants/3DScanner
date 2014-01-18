@@ -34,15 +34,11 @@
 
 -(UIColor *) getAverageColorInRect:(CGRect) rect;
 
--(uint8_t *) getLuminanceBuffer;
-
 -(CIImage *) getCIImage;
 -(CGImageRef) getCGImage;
 -(UIImage *) getUIImage;
 
 +(UIImage *) imageFromCIImage:(CIImage *) image;
 +(UIImage *) imageFromCGImage:(CGImageRef) image;
-
-+(uint8_t *) convertARGBPixelBufferToLuminanceBuffer:(CVPixelBufferRef) pixelBuffer;
 
 @end

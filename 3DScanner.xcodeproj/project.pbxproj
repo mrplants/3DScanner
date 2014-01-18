@@ -22,6 +22,7 @@
 		14EA126F188A27DA005AED52 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 14EA126D188A27DA005AED52 /* InfoPlist.strings */; };
 		14EA1271188A27DA005AED52 /* _DScannerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 14EA1270188A27DA005AED52 /* _DScannerTests.m */; };
 		14EA127D188A2B36005AED52 /* SCBitmap.m in Sources */ = {isa = PBXBuildFile; fileRef = 14EA127C188A2B36005AED52 /* SCBitmap.m */; };
+		14EA1280188A4939005AED52 /* SCBitmapData.m in Sources */ = {isa = PBXBuildFile; fileRef = 14EA127F188A4939005AED52 /* SCBitmapData.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,8 @@
 		14EA1270188A27DA005AED52 /* _DScannerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _DScannerTests.m; sourceTree = "<group>"; };
 		14EA127B188A2B36005AED52 /* SCBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCBitmap.h; sourceTree = "<group>"; };
 		14EA127C188A2B36005AED52 /* SCBitmap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCBitmap.m; sourceTree = "<group>"; };
+		14EA127E188A4939005AED52 /* SCBitmapData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCBitmapData.h; sourceTree = "<group>"; };
+		14EA127F188A4939005AED52 /* SCBitmapData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCBitmapData.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +162,8 @@
 		14EA127A188A2B17005AED52 /* imageManipulation */ = {
 			isa = PBXGroup;
 			children = (
+				14EA127E188A4939005AED52 /* SCBitmapData.h */,
+				14EA127F188A4939005AED52 /* SCBitmapData.m */,
 				14EA127B188A2B36005AED52 /* SCBitmap.h */,
 				14EA127C188A2B36005AED52 /* SCBitmap.m */,
 			);
@@ -263,6 +268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14EA1280188A4939005AED52 /* SCBitmapData.m in Sources */,
 				14EA127D188A2B36005AED52 /* SCBitmap.m in Sources */,
 				14EA1256188A27DA005AED52 /* SCAppDelegate.m in Sources */,
 				14EA125C188A27DA005AED52 /* SCViewController.m in Sources */,
