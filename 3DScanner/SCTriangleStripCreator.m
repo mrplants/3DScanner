@@ -27,6 +27,17 @@ GLKVector3 crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D p
     _indexArray = indexArray;
 }
 
+-(void)setPointsArrayOfLines:(CGPoint3D **)pointsArrayOfLines {
+    if(_pointsArrayOfLines) {
+        for (int i = 0; i < self.numberOfLinesGiven; i++) {
+            free(_pointsArrayOfLines[i]);
+        }
+        free(_pointsArrayOfLines);
+    }
+    _pointsArrayOfLines = pointsArrayOfLines;
+    [self calculate];
+}
+
 - (void)dealloc {
     free(_vertexArray);
     free(_indexArray);
