@@ -32,6 +32,6 @@ typedef struct CGPoint3D {
 -(void)loadWithPixelBuffer:(CVPixelBufferRef)pixelBuffer;
 -(CGPoint3D **)generateTriangleData;
 -(NSArray *)extractRedValueHeightDifferences;
-Color colorAtlocation(CGPoint point, uint8_t* data, CGSize resolution);
+void colorAtlocation(int row, int col, uint8_t* data, int width, int* red, int* green, int*blue);
 
 @end
