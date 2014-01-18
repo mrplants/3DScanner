@@ -12,6 +12,7 @@
 @interface SCTriangleStripCreator ()
 
 CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt3);
+CGPoint3D shiftPointInXDirection(CGPoint3D pt);
 
 @end
 
@@ -69,10 +70,18 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
     }
 }
 
+CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
+    CGPoint3D newPt;
+    newPt.x = pt.x + 0.05;
+    newPt.y = pt.y;
+    newPt.z = pt.z;
+    return newPt;
+}
+
 - (void)calculate {
     [self scalePoints];
-    self.lengthOfVertexArray = self.numberOfLinesGiven * 3 * (self.lengthOfPointsOnLine - 2) * 6;
-    self.lengthOfIndexArray = (self.lengthOfPointsOnLine - 2) * self.numberOfLinesGiven;
+    self.lengthOfVertexArray = (self.lengthOfPointsOnLine * 2 - 2) * self.numberOfLinesGiven * 6;
+    self.lengthOfIndexArray = (self.lengthOfPointsOnLine * 2 - 2) * self.numberOfLinesGiven;
     self.vertexArray = malloc(self.lengthOfVertexArray * sizeof(GLfloat));
     self.indexArray = malloc(self.lengthOfIndexArray * sizeof(GLuint));
     
@@ -80,11 +89,14 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
     // one line at a time approach
     for (int x = 0; x < self.numberOfLinesGiven; x++) {
         
-        for (int y = 0; y < self.lengthOfPointsOnLine - 1; y+=2) {
+        for (int y = 0; y < self.lengthOfPointsOnLine - 1; y++) {
+            
             CGPoint3D rootPoint, rightPoint, leftPoint;
+            
             rootPoint = self.pointsArrayOfLines[x][y];
-            rightPoint = self.pointsArrayOfLines[x][y+1];
-            leftPoint = self.pointsArrayOfLines[x][y+2];
+            rightPoint = shiftPointInXDirection(self.pointsArrayOfLines[x][y]);
+            leftPoint = self.pointsArrayOfLines[x][y + 1];
+            
             //calculate normal
             CGPoint3D normal = crossProductWithThreePoints(rootPoint, rightPoint, leftPoint);
 
@@ -117,9 +129,9 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
             self.indexArray[(x) * self.numberOfLinesGiven + (y*3)+2] = (x) * self.numberOfLinesGiven + (y*3)+2;
 
             
-            rootPoint = self.pointsArrayOfLines[x][y+1];
-            leftPoint = self.pointsArrayOfLines[x][y+2];
-            rightPoint = self.pointsArrayOfLines[x][y+3];
+            rootPoint = shiftPointInXDirection(self.pointsArrayOfLines[x][y]);
+            leftPoint = self.pointsArrayOfLines[x][y];
+            rightPoint = shiftPointInXDirection(self.pointsArrayOfLines[x][y + 1]);
             //calculate normal
             normal = crossProductWithThreePoints(rootPoint, rightPoint, leftPoint);
             
