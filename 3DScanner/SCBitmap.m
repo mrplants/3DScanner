@@ -16,6 +16,32 @@
 	if (self.data) free(self.data);
 }
 
+-(Color) getColorAtPoint:(CGPoint)point
+{
+    int index;
+    Color pixelColor;
+    
+    // TODO should handle erroneous input better
+    pixelColor.red = -1;
+    pixelColor.green = -1;
+    pixelColor.blue = -1;
+    
+    if (self.data != NULL)
+    {
+        // Check that the given coordinates are within the image
+        if (point.x <= self.resolution.width && point.x >= 0 && point.y >= 0 && point.y <= self.resolution.height)
+        {
+            index = (point.x + point.y * self.resolution.width) * 4;
+            pixelColor.red = self.data[index+1];
+            pixelColor.green = self.data[index+2];
+            pixelColor.blue = self.data[index+3];
+        }
+        
+    }
+    return pixelColor;
+}
+
+
 //-(void) loadBitmapWithCIImage:(CIImage *) newImage
 //{
 //	CIContext * conversionContext = [CIContext contextWithOptions:nil];

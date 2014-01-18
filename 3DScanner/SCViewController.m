@@ -8,7 +8,7 @@
 
 #import "SCViewController.h"
 @import AVFoundation;
-#import "SCBitmap.h"
+#import "SCBitmapData.h"
 
 @interface SCViewController () <AVCaptureVideoDataOutputSampleBufferDelegate>
 
@@ -16,7 +16,7 @@
 @property (nonatomic, strong) AVCaptureDevice *videoCaptureDevice;
 @property (weak, nonatomic) IBOutlet UIView *videoPreviewView;
 @property (nonatomic) BOOL isProcessingSampleFrame;
-@property (nonatomic, strong) SCBitmap *bitmapAnalyzer;
+@property (nonatomic, strong) SCBitmapData *bitmapAnalyzer;
 
 @end
 
@@ -26,7 +26,7 @@
 {
     [super viewDidLayoutSubviews];
     [self setupVideoCamera];
-    self.bitmapAnalyzer = [[SCBitmap alloc] init];
+    self.bitmapAnalyzer = [[SCBitmapData alloc] init];
     [self.videoCaptureSession startRunning];
 }
 
@@ -105,7 +105,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         CVPixelBufferLockBaseAddress(pixelBuffer, 0);
 		//extracts only the luminance buffer plane
 		
-        [self.bitmapAnalyzer loadBitmapWithPixelBuffer:pixelBuffer];
+        [self.bitmapAnalyzer loadWithPixelBuffer:pixelBuffer];
 //		CGSize bufferResolution = CGSizeMake(CVPixelBufferGetWidth(pixelBuffer), CVPixelBufferGetHeight(pixelBuffer));
 //        uint8_t * baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer);
 //        		
