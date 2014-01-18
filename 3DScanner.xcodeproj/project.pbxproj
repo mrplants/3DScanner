@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		14397D9E188A69C10014CB27 /* ScannerGLKViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14397D9D188A69C10014CB27 /* ScannerGLKViewController.m */; };
 		14397DA5188A807A0014CB27 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14397DA4188A807A0014CB27 /* QuartzCore.framework */; };
+		14397DF1188AC9B40014CB27 /* vertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 14397DF0188AC9B40014CB27 /* vertex.glsl */; };
+		14397DF3188AC9C80014CB27 /* fragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 14397DF2188AC9C80014CB27 /* fragment.glsl */; };
 		14EA1246188A27DA005AED52 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1245188A27DA005AED52 /* Foundation.framework */; };
 		14EA1248188A27DA005AED52 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1247188A27DA005AED52 /* CoreGraphics.framework */; };
 		14EA124A188A27DA005AED52 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1249188A27DA005AED52 /* UIKit.framework */; };
@@ -42,6 +44,8 @@
 		14397D9C188A69C10014CB27 /* ScannerGLKViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerGLKViewController.h; sourceTree = "<group>"; };
 		14397D9D188A69C10014CB27 /* ScannerGLKViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerGLKViewController.m; sourceTree = "<group>"; };
 		14397DA4188A807A0014CB27 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		14397DF0188AC9B40014CB27 /* vertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vertex.glsl; sourceTree = "<group>"; };
+		14397DF2188AC9C80014CB27 /* fragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fragment.glsl; sourceTree = "<group>"; };
 		14EA1242188A27DA005AED52 /* 3DScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 3DScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		14EA1245188A27DA005AED52 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		14EA1247188A27DA005AED52 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -94,6 +98,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		14397DEF188AC9A70014CB27 /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				14397DF0188AC9B40014CB27 /* vertex.glsl */,
+				14397DF2188AC9C80014CB27 /* fragment.glsl */,
+			);
+			name = shaders;
+			sourceTree = "<group>";
+		};
 		14EA1239188A27DA005AED52 = {
 			isa = PBXGroup;
 			children = (
@@ -130,6 +143,7 @@
 		14EA124B188A27DA005AED52 /* 3DScanner */ = {
 			isa = PBXGroup;
 			children = (
+				14397DEF188AC9A70014CB27 /* shaders */,
 				14EA127A188A2B17005AED52 /* imageManipulation */,
 				14EA1254188A27DA005AED52 /* SCAppDelegate.h */,
 				14EA1255188A27DA005AED52 /* SCAppDelegate.m */,
@@ -259,7 +273,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14397DF3188AC9C80014CB27 /* fragment.glsl in Resources */,
 				14EA125E188A27DA005AED52 /* Images.xcassets in Resources */,
+				14397DF1188AC9B40014CB27 /* vertex.glsl in Resources */,
 				14EA1250188A27DA005AED52 /* InfoPlist.strings in Resources */,
 				14EA1259188A27DA005AED52 /* Main.storyboard in Resources */,
 			);
