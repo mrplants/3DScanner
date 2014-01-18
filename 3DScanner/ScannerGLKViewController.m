@@ -264,7 +264,6 @@ typedef struct
     return shaderHandle;
 }
 
-
 -(void)getUniforms
 {
     GLint maxUniformLength;
