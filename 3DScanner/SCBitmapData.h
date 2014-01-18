@@ -14,13 +14,24 @@ typedef struct Color {
     uint8_t blue;
 } Color;
 
+typedef struct CGPoint3D {
+    float x;
+    float y;
+    float z;
+} CGPoint3D;
+
 @interface SCBitmapData : NSObject
+
+@property (nonatomic) NSMutableArray *heightValues;
+@property (nonatomic) int imageCount;
+@property (nonatomic) int imageWidth;
 
 @property (nonatomic) uint8_t *imageData;
 @property (nonatomic) CGSize resolution;
 
 -(void)loadWithPixelBuffer:(CVPixelBufferRef)pixelBuffer;
-
+-(CGPoint3D **)generateTriangleData;
+-(NSArray *)extractRedValueHeightDifferences;
 Color colorAtlocation(CGPoint point, uint8_t* data, CGSize resolution);
 
 @end

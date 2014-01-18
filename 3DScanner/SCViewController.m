@@ -121,6 +121,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		//extracts only the luminance buffer plane
 		
         [self.bitmapAnalyzer loadWithPixelBuffer:pixelBuffer];
+        [self.bitmapAnalyzer extractRedValueHeightDifferences];
+        CGPoint3D ** triangles = [self.bitmapAnalyzer generateTriangleData];
+        
 		
 		CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 		//unlock the pixel buffer - Good practice
