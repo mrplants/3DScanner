@@ -13,4 +13,5 @@
 
 @property (nonatomic, strong) SCTriangleStripCreator *triangleData;
 
+-(void)setupGL;
 @end

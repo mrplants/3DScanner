@@ -130,7 +130,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 		//unlock the pixel buffer - Good practice
         
-        if (self.bitmapAnalyzer.imageCount == 15) {
+        if (self.bitmapAnalyzer.imageCount == 1) {
             dispatch_async(dispatch_get_main_queue(), ^(void){
                 [self renderButtonPressed:nil];
             });
@@ -156,6 +156,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         vc.triangleData.numberOfLinesGiven = self.bitmapAnalyzer.imageCount;
         vc.triangleData.lengthOfPointsOnLine = self.bitmapAnalyzer.imageWidth;
         vc.triangleData.pointsArrayOfLines = self.triangles;
+//        [vc setupGL];
     }
     [super prepareForSegue:segue sender:sender];
 }

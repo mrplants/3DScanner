@@ -34,8 +34,11 @@ typedef struct
 @property (strong, nonatomic) GLKBaseEffect *effect;
 @end
 
-//GLfloat CubeVertexData[144] =
-//{
+GLfloat CubeVertexData[144] =
+{
+    0.0f, 0.0f, 0.0f,       1.0f, 0.0f, 0.0f,
+    0.0f, 0.5f, 0.0f,       1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.5f,       1.0f, 0.0f, 0.0f
 //    // right 0
 //    0.5f, -0.5f, -0.5f,     1.0f, 0.0f, 0.0f,
 //    0.5f,  0.5f, -0.5f,     1.0f, 0.0f, 0.0f,
@@ -70,11 +73,12 @@ typedef struct
 //    0.5f,  0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
 //    0.5f, -0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
 //    -0.5f, -0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
-//    -0.5f,  0.5f, -0.5f,     0.0f, 0.0f, -1.0f,
-//};
-//
-//GLuint CubeIndicesData[36] =
-//{
+//    -0.5f,  0.5f, -0.5f,     0.0f, 0.0f, -1.0f
+};
+
+GLuint CubeIndicesData[36] =
+{
+    0, 1, 2
 //    // right
 //    0, 1, 2,        2, 3, 0,
 //    
@@ -92,7 +96,7 @@ typedef struct
 //    
 //    // back
 //    20, 21, 22,     22, 23, 20
-//};
+};
 
 
 @implementation ScannerGLKViewController
@@ -100,6 +104,8 @@ typedef struct
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _autoRotate = YES;
     
     // Create context
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
@@ -137,13 +143,18 @@ typedef struct
     // Make the vertex buffer
     glGenBuffers( 1, &_verticesVBO );
     glBindBuffer( GL_ARRAY_BUFFER, _verticesVBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(self.triangleData.vertexArray), self.triangleData.vertexArray, GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(GLfloat)*18, self.triangleData.vertexArray, GL_STATIC_DRAW );
+//    glBufferData( GL_ARRAY_BUFFER, sizeof(CubeVertexData), CubeVertexData, GL_STATIC_DRAW );
+    NSLog(@"%lu", sizeof(CubeVertexData));
+    NSLog(@"%lu", sizeof(self.triangleData.vertexArray));
+    
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     
     // Make the indices buffer
     glGenBuffers( 1, &_indicesVBO );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, _indicesVBO );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(self.triangleData.indexArray), self.triangleData.indexArray, GL_STATIC_DRAW );
+    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 3, self.triangleData.indexArray, GL_STATIC_DRAW );
+//    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(CubeIndicesData), CubeIndicesData, GL_STATIC_DRAW );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     
     // Bind the attribute pointers to the VAO
@@ -172,7 +183,8 @@ typedef struct
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(Tapped:)];
     tap.numberOfTapsRequired = 2;
     [view addGestureRecognizer:tap];
-
+//    CubeIndicesData = self.triangleData.indexArray;
+//    CubeVertexData = self.triangleData.vertexArray;
 }
 
 -(void)Tapped:(UITapGestureRecognizer*)sender
@@ -329,7 +341,8 @@ typedef struct
     }
     
     // Draw!
-    glDrawElements( GL_TRIANGLES, sizeof(self.triangleData.indexArray)/sizeof(GLuint), GL_UNSIGNED_INT, NULL );
+    glDrawElements( GL_TRIANGLES, sizeof(GLuint) * 3/sizeof(GLuint), GL_UNSIGNED_INT, NULL );
+//    glDrawElements( GL_TRIANGLES, sizeof(CubeIndicesData)/sizeof(GLuint), GL_UNSIGNED_INT, NULL );
 }
 
 - (void)update
