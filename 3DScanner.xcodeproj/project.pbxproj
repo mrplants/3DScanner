@@ -22,6 +22,7 @@
 		14EA126F188A27DA005AED52 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 14EA126D188A27DA005AED52 /* InfoPlist.strings */; };
 		14EA1271188A27DA005AED52 /* _DScannerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 14EA1270188A27DA005AED52 /* _DScannerTests.m */; };
 		14EA127D188A2B36005AED52 /* SEABitmap.m in Sources */ = {isa = PBXBuildFile; fileRef = 14EA127C188A2B36005AED52 /* SEABitmap.m */; };
+		885589BF188A2B8B000A4DA7 /* SCHeightMapTranslator.m in Sources */ = {isa = PBXBuildFile; fileRef = 885589BE188A2B8B000A4DA7 /* SCHeightMapTranslator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,8 @@
 		14EA1270188A27DA005AED52 /* _DScannerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _DScannerTests.m; sourceTree = "<group>"; };
 		14EA127B188A2B36005AED52 /* SEABitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SEABitmap.h; sourceTree = "<group>"; };
 		14EA127C188A2B36005AED52 /* SEABitmap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SEABitmap.m; sourceTree = "<group>"; };
+		885589BD188A2B8B000A4DA7 /* SCHeightMapTranslator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCHeightMapTranslator.h; sourceTree = "<group>"; };
+		885589BE188A2B8B000A4DA7 /* SCHeightMapTranslator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCHeightMapTranslator.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +164,8 @@
 			children = (
 				14EA127B188A2B36005AED52 /* SEABitmap.h */,
 				14EA127C188A2B36005AED52 /* SEABitmap.m */,
+				885589BD188A2B8B000A4DA7 /* SCHeightMapTranslator.h */,
+				885589BE188A2B8B000A4DA7 /* SCHeightMapTranslator.m */,
 			);
 			name = imageManipulation;
 			sourceTree = "<group>";
@@ -264,6 +269,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				14EA127D188A2B36005AED52 /* SEABitmap.m in Sources */,
+				885589BF188A2B8B000A4DA7 /* SCHeightMapTranslator.m in Sources */,
 				14EA1256188A27DA005AED52 /* SCAppDelegate.m in Sources */,
 				14EA125C188A27DA005AED52 /* SCViewController.m in Sources */,
 				14EA1252188A27DA005AED52 /* main.m in Sources */,
@@ -475,6 +481,7 @@
 				14EA1276188A27DA005AED52 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		14EA1277188A27DA005AED52 /* Build configuration list for PBXNativeTarget "3DScannerTests" */ = {
 			isa = XCConfigurationList;
@@ -483,6 +490,7 @@
 				14EA1279188A27DA005AED52 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
