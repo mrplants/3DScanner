@@ -138,10 +138,23 @@
 	}
 }
 
-//-(CGFloat) getColorAtPixel:(int)x (int)y
-//{
-//    
-//}
+-(CGFloat) getColorAtPoint:(CGPoint)point
+{
+    int index;
+    
+    if (self.data != NULL)
+    {
+        // Check that the given coordinates are within the image
+        if (point.x <= self.resolution.width && point.x >= 0 && point.y >= 0 && point.y <= self.resolution.height)
+        {
+            // TODO What value should go into the array? How do I access the coordinate?
+            index = (point.x + point.y * self.resolution.width) * 4;
+            return self.data[index+1];
+        }
+        
+    }
+    return -1; // TODO should handle erroneous input better
+}
 
 +(uint8_t *) convertARGBPixelBufferToLuminanceBuffer:(CVPixelBufferRef) pixelBuffer
 {
