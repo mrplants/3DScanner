@@ -108,9 +108,9 @@ CGPoint3D crossProductWithThreePoints(CGPoint3D pt1, CGPoint3D pt2, CGPoint3D pt
 
 - (void)calculate {
     [self scalePoints];
-    self.lengthOfVertexArray = self.numberOfLinesGiven * self.lengthOfPointsOnLine * 6;
-    self.lengthOfIndexArray = self.lengthOfVertexArray / 2;
-    self.vertexArray = malloc(self.lengthOfVertexArray * sizeof(GLfloat));
+    self.lengthOfVertexArray = self.numberOfLinesGiven * 3 * (self.lengthOfPointsOnLine - 2);
+    self.lengthOfIndexArray = self.lengthOfVertexArray - 2 * self.numberOfLinesGiven;
+    self.vertexArray = malloc(self.lengthOfVertexArray * sizeof(GLfloat) * 6);
     self.indexArray = malloc(self.lengthOfIndexArray * sizeof(GLuint));
     
     
