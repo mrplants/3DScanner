@@ -20,6 +20,17 @@
     _indexArray = indexArray;
 }
 
+-(void)setPointsArrayOfLines:(CGPoint3D **)pointsArrayOfLines {
+    if(_pointsArrayOfLines) {
+        for (int i = 0; i < self.numberOfLinesGiven; i++) {
+            free(_pointsArrayOfLines[i]);
+        }
+        free(_pointsArrayOfLines);
+    }
+    _pointsArrayOfLines = pointsArrayOfLines;
+    [self calculate];
+}
+
 - (void)dealloc {
     free(_vertexArray);
     free(_indexArray);
@@ -28,7 +39,8 @@
 - (void)calculate {
     
     self.vertexArray = malloc(self.numberOfLinesGiven * self.lengthOfPointsOnLine * 6 * sizeof(GLfloat));
-    self.indexArray = malloc(self.numberOfLinesGiven * (self.lengthOfPointsOnLine + 2) * sizeof(GLuint));
+
+    self.indexArray = malloc((self.numberOfLinesGiven - 1) * (self.lengthOfPointsOnLine - 1) * 6 * sizeof(GLuint));
     
     for (int x = 0; x < self.numberOfLinesGiven; x++) {
         // doubling up the first point
