@@ -28,7 +28,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="4fc-cq-kU5" kind="push" id="Mym-9Y-mbl"/>
+                                    <action selector="renderButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="xb6-l8-7EH"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -45,6 +45,7 @@
                     <navigationItem key="navigationItem" id="jKf-36-2l6"/>
                     <connections>
                         <outlet property="videoPreviewView" destination="nrk-7x-4fv" id="htF-h3-AWk"/>
+                        <segue destination="4fc-cq-kU5" kind="push" identifier="renderSegue" id="9TR-b4-k4D"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

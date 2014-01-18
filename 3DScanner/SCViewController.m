@@ -122,8 +122,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		
         [self.bitmapAnalyzer loadWithPixelBuffer:pixelBuffer];
         [self.bitmapAnalyzer extractRedValueHeightDifferences];
-        CGPoint3D ** triangles = [self.bitmapAnalyzer generateTriangleData];
-        
 		
 		CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 		//unlock the pixel buffer - Good practice
@@ -135,6 +133,17 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 	}
 }
 
+- (IBAction)renderButtonPressed:(UIButton *)sender {
+    CGPoint3D ** triangles = [self.bitmapAnalyzer generateTriangleData];
+    [self performSegueWithIdentifier:@"renderSegue" sender:self];
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"renderSegue"]) {
+        
+    }
+}
 
 
 @end
