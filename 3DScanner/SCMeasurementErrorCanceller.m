@@ -11,8 +11,6 @@
 
 @interface SCMeasurementErrorCanceller ()
 
-- (void)generateMatrix;
-
 @end
 
 @implementation SCMeasurementErrorCanceller
@@ -45,10 +43,6 @@
     
     
     
-    
-}
-
-- (void)generateMatrix {
     
 }
 
