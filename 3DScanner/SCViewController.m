@@ -40,7 +40,7 @@
     [self.videoCaptureSession startRunning];
     
     self.currentDataFrame = 0;
-    self.numDataFrames = 2;
+    self.numDataFrames = 15;
     self.triangles = malloc(sizeof(int *) * self.numDataFrames);
     
 }
@@ -171,9 +171,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         CGImageRelease(quartzImage);
 
         
-//        if (self.triangles[self.currentDataFrame] != NULL) {
-//            self.currentDataFrame++;
-//        }
+        if (self.triangles[self.currentDataFrame] != NULL) {
+            self.currentDataFrame++;
+        }
         
         if (self.currentDataFrame == self.numDataFrames) {
             [self.videoCaptureSession stopRunning];
@@ -274,7 +274,7 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
             } else if (lineState == stateFirstRed) {//found a line of red pixels
                 if (RED) {
                     pixelCount++;
-                } else if (WHITE && pixelCount > 5) {
+                } else if (WHITE && pixelCount > 2) {
                     pixelCount = 1;
                     pixelsThatDontCount = 0;
                     lineState = statewhite;
@@ -422,6 +422,7 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
             }
             
             if (passedStateMachine) {
+                numSuccessfulLines++;
                 NSLog(@"Passed!");
                 for (int i = -20; i < 20; i++) {
                     if ((row+i) > resolution.height) {
@@ -433,7 +434,7 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
                     data[(col + (row+i) * ((int)resolution.width + 8))*4] = 255;
                     data[(col + (row+i) * ((int)resolution.width + 8))*4+1] = 0;
                     data[(col + (row+i) * ((int)resolution.width + 8))*4+2] = 255;
-                    
+                    heights[col] = row;
                 }
                 break;
             }
@@ -448,85 +449,86 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
     passedStateMachine = NO;
     
     // finite state machine in HSV dark-bright-dark
-    for (int col = 0; col < resolution.width; col++) {
-        pixelCount = 0;
-        pixelsThatDontCount = 0;
-        lineState = beforeState;
-        passedStateMachine = NO;
-        for (int row = 0; row < resolution.height && heights[col] == 0; row++) {
-            colorAtlocation(row, col, data, resolution.width, &red, &green, &blue);
-            RGBtoHSV(red, green, blue, &hue, &saturation, &brightness);
-            
-            if (lineState == beforeState) {
-                if (!HSVRED) {
-                    pixelCount++;
-                    lineState = stateBeforeBrightRed;
-                }
-            } else if (lineState == stateBeforeBrightRed) {
-                if (!HSVRED) {
-                    pixelCount++;
-                } else if (HSVRED && HSVBRIGHT && pixelCount > 5) {
-                    pixelCount = 0;
-                    pixelsThatDontCount = 0;
-                    lineState = stateBrightRed;
-                } else if(pixelsThatDontCount > 15) {
-                    pixelCount = 0;
-                    pixelsThatDontCount = 0;
-                    lineState = beforeState;
-                } else {
-                    pixelsThatDontCount++;
-                }
-            } else if (lineState == stateBrightRed) {
-                if (HSVRED && HSVBRIGHT) {
-                    pixelCount++;
-                } else if (!HSVRED && pixelCount <= 250 && pixelCount > 5) { //this is saying it's a thin line
-                    lineState = stateAfterBrightRed;
-                    pixelCount = 0;
-                    pixelsThatDontCount = 0;
-                } else if(pixelsThatDontCount > 15) {
-                    pixelCount = 0;
-                    pixelsThatDontCount = 0;
-                    lineState = beforeState;
-                } else {
-                    pixelsThatDontCount++;
-                }
-            } else if (lineState == stateAfterBrightRed) {
-                if (!HSVRED) {
-                    pixelCount++;
-                    if (pixelCount > 5) {
-                        pixelCount = 0;
-                        pixelsThatDontCount = 0;
-                        lineState = beforeState;
-                        passedStateMachine = YES;
-                    }
-                } else if(pixelsThatDontCount > 15) {
-                    pixelCount = 0;
-                    pixelsThatDontCount = 0;
-                    lineState = beforeState;
-                } else {
-                    pixelsThatDontCount++;
-                }
-            }
-            if (passedStateMachine) {
-                NSLog(@"Passed!");
-                for (int i = -20; i < 20; i++) {
-                    if ((row+i) > resolution.height) {
-                        continue;
-                    }
-                    //                    NSLog(@"width float: %f, width int: %d", resolution.width, (int)resolution.width);
-                    //                    NSLog(@"col: %d, row: %d, row+i:%d", col, row, row+i);
-                    //                    NSLog(@"index:%d", col, row, row+i);
-                    data[(col + (row+i) * ((int)resolution.width + 8))*4] = 255;
-                    data[(col + (row+i) * ((int)resolution.width + 8))*4+1] = 0;
-                    data[(col + (row+i) * ((int)resolution.width + 8))*4+2] = 255;
-                    
-                }
-                break;
-            }
-        }
-    }
+//    for (int col = 0; col < resolution.width; col++) {
+//        pixelCount = 0;
+//        pixelsThatDontCount = 0;
+//        lineState = beforeState;
+//        passedStateMachine = NO;
+//        for (int row = 0; row < resolution.height && heights[col] == 0; row++) {
+//            colorAtlocation(row, col, data, resolution.width, &red, &green, &blue);
+//            RGBtoHSV(red, green, blue, &hue, &saturation, &brightness);
+//            
+//            if (lineState == beforeState) {
+//                if (!HSVRED) {
+//                    pixelCount++;
+//                    lineState = stateBeforeBrightRed;
+//                }
+//            } else if (lineState == stateBeforeBrightRed) {
+//                if (!HSVRED) {
+//                    pixelCount++;
+//                } else if (HSVRED && HSVBRIGHT && pixelCount > 5) {
+//                    pixelCount = 0;
+//                    pixelsThatDontCount = 0;
+//                    lineState = stateBrightRed;
+//                } else if(pixelsThatDontCount > 15) {
+//                    pixelCount = 0;
+//                    pixelsThatDontCount = 0;
+//                    lineState = beforeState;
+//                } else {
+//                    pixelsThatDontCount++;
+//                }
+//            } else if (lineState == stateBrightRed) {
+//                if (HSVRED && HSVBRIGHT) {
+//                    pixelCount++;
+//                } else if (!HSVRED && pixelCount <= 250 && pixelCount > 5) { //this is saying it's a thin line
+//                    lineState = stateAfterBrightRed;
+//                    pixelCount = 0;
+//                    pixelsThatDontCount = 0;
+//                } else if(pixelsThatDontCount > 15) {
+//                    pixelCount = 0;
+//                    pixelsThatDontCount = 0;
+//                    lineState = beforeState;
+//                } else {
+//                    pixelsThatDontCount++;
+//                }
+//            } else if (lineState == stateAfterBrightRed) {
+//                if (!HSVRED) {
+//                    pixelCount++;
+//                    if (pixelCount > 5) {
+//                        pixelCount = 0;
+//                        pixelsThatDontCount = 0;
+//                        lineState = beforeState;
+//                        passedStateMachine = YES;
+//                    }
+//                } else if(pixelsThatDontCount > 15) {
+//                    pixelCount = 0;
+//                    pixelsThatDontCount = 0;
+//                    lineState = beforeState;
+//                } else {
+//                    pixelsThatDontCount++;
+//                }
+//            }
+//            if (passedStateMachine) {
+//                numSuccessfulLines++;
+//                NSLog(@"Passed!");
+//                for (int i = -20; i < 20; i++) {
+//                    if ((row+i) > resolution.height) {
+//                        continue;
+//                    }
+//                    //                    NSLog(@"width float: %f, width int: %d", resolution.width, (int)resolution.width);
+//                    //                    NSLog(@"col: %d, row: %d, row+i:%d", col, row, row+i);
+//                    //                    NSLog(@"index:%d", col, row, row+i);
+//                    data[(col + (row+i) * ((int)resolution.width + 8))*4] = 255;
+//                    data[(col + (row+i) * ((int)resolution.width + 8))*4+1] = 0;
+//                    data[(col + (row+i) * ((int)resolution.width + 8))*4+2] = 255;
+//                    heights[col] = row;
+//                }
+//                break;
+//            }
+//        }
+//    }
     
-    if (numSuccessfulLines <= resolution.width / 3) {
+    if (numSuccessfulLines <= resolution.width / 2) {
         return NULL;
     } else {
         //need to take out the zeroes
