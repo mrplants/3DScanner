@@ -171,9 +171,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         CGImageRelease(quartzImage);
 
         
-        if (self.triangles[self.currentDataFrame] != NULL) {
-            self.currentDataFrame++;
-        }
+//        if (self.triangles[self.currentDataFrame] != NULL) {
+//            self.currentDataFrame++;
+//        }
         
         if (self.currentDataFrame == self.numDataFrames) {
             [self.videoCaptureSession stopRunning];
@@ -202,37 +202,38 @@ void colorAtlocation(int row, int col, uint8_t* data, int width, int* red, int* 
     return;
 }
 
-void RGBToHSV(int r, int g, int b, float *h, float *s, float *v) {
-    
-    float min, max, delta;
-    min = MIN( r, MIN(g, b ));
-    max = MAX( r, MAX(g, b ));
-    
-    *v = max;
-    delta = max - min;
-    
-    if (max != 0) {
-        *s = delta / max;
-    } else {
-        // r = g = b = 0
-        *s = 0;
-        *h = -1;
-        return;
-    }
-    if (r == max) {
-        *h = (g - b) / delta;
-    } else if (g == max) {
-        *h = 2 + (b - r) / delta;
-    } else {
-        *h = 4 + (r - g) / delta;
-    }
-    *h *= 60;
-    if (*h < 0) *h += 360;
+void RGBtoHSV( float r, float g, float b, float *h, float *s, float *v )
+{
+    r/=255;
+    b/=255;
+    g/=255;
+	float min, max, delta;
+	min = MIN(MIN( r, g), b );
+	max = MAX(MAX( r, g), b );
+	*v = max;				// v
+	delta = max - min;
+	if( max != 0 )
+		*s = delta / max;		// s
+	else {
+		// r = g = b = 0		// s = 0, v is undefined
+		*s = 0;
+		*h = -1;
+		return;
+	}
+	if( r == max )
+		*h = ( g - b ) / delta;		// between yellow & magenta
+	else if( g == max )
+		*h = 2 + ( b - r ) / delta;	// between cyan & yellow
+	else
+		*h = 4 + ( r - g ) / delta;	// between magenta & cyan
+	*h *= 60;				// degrees
+	if( *h < 0 )
+		*h += 360;
 }
 
 int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
 
-    int red, green, blue, maxRed, maxRedIndex, numSuccessfulLines = 0;
+    int red, green, blue, numSuccessfulLines = 0;
     
 #define beforeState 0
 #define stateFirstRed 1
@@ -251,7 +252,6 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
 
     // finite state machine in RGB
     for (int col = 0; col < resolution.width; col++) {
-        maxRed = maxRedIndex = 0;
         pixelCount = 0;
         pixelsThatDontCount = 0;
         lineState = beforeState;
@@ -348,104 +348,184 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
      //   }
     }
     
-//    // finite state machine in HSV
-//    for (int col = 0; col < resolution.width; col++) {
-//        
-//        for (int col = 0; col < resolution.width; col++) {
-//            maxRed = maxRedIndex = 0;
-//            pixelCount = 0;
-//            pixelsThatDontCount = 0;
-//            lineState = beforeState;
-//            passedStateMachine = NO;
-//            for (int row = 0; row < resolution.height; row++) {
-//                colorAtlocation(row, col, data, resolution.width, &red, &green, &blue);
-//                RGBToHSV(red, green, blue, &hue, &saturation, &brightness);
-//                
-//#define HSVRED ((hue > 300.0 / 360.0 && hue <= 359.0 / 360.0) || (hue >= 0 && hue <= 35.0 / 360.0))
-//#define HSVWHITE (brightness >= 80)
-//                
-//                if (lineState == beforeState) { //initial state of the Automota machine
-//                    if (HSVRED) {
-//                        // it's a orange-red to purple-red color
-//                        pixelCount++;
-//                        lineState = stateFirstRed;
-//                    }
-//                } else if (lineState == stateFirstRed) {//found a line of red pixels
-//                    if (HSVRED) {
-//                        pixelCount++;
-//                    } else if (HSVWHITE && pixelCount > 5) {
-//                        pixelCount = 1;
-//                        pixelsThatDontCount = 0;
-//                        lineState = statewhite;
-//                    }else if(pixelsThatDontCount > 10) {
-//                        pixelCount = 0;
-//                        pixelsThatDontCount = 0;
-//                        lineState = beforeState;
-//                    } else {
-//                        pixelsThatDontCount++;
-//                    }
-//                } else if (lineState == statewhite) {
-//                    if (HSVWHITE) {
-//                        pixelCount++;
-//                    } else if (HSVRED && pixelCount <= 350) {
-//                        pixelCount = 1;
-//                        pixelsThatDontCount = 0;
-//                        lineState = stateSecondRed;
-//                    }else if(pixelsThatDontCount > 10) {
-//                        pixelCount = 0;
-//                        pixelsThatDontCount = 0;
-//                        lineState = beforeState;
-//                    } else {
-//                        pixelsThatDontCount++;
-//                    }
-//                } else if (lineState == stateSecondRed) {
-//                    if (HSVRED) {
-//                        pixelCount++;
-//                    } else if (pixelCount > 2) {
-//                        pixelCount = 0;
-//                        pixelsThatDontCount = 0;
-//                        lineState = beforeState;
-//                        passedStateMachine = YES;
-//                    }else if(pixelsThatDontCount > 20) {
-//                        pixelCount = 0;
-//                        pixelsThatDontCount = 0;
-//                        lineState = beforeState;
-//                    } else {
-//                        pixelsThatDontCount++;
-//                    }
-//                }
-//                
-//                
-//                
-//                if (passedStateMachine) {
-//                    NSLog(@"Passed!");
-//                    for (int i = -20; i < 20; i++) {
-//                        if ((row+i) > resolution.height) {
-//                            continue;
-//                        }
-//                        //                    NSLog(@"width float: %f, width int: %d", resolution.width, (int)resolution.width);
-//                        //                    NSLog(@"col: %d, row: %d, row+i:%d", col, row, row+i);
-//                        //                    NSLog(@"index:%d", col, row, row+i);
-//                        data[(col + (row+i) * ((int)resolution.width + 8))*4] = 255;
-//                        data[(col + (row+i) * ((int)resolution.width + 8))*4+1] = 0;
-//                        data[(col + (row+i) * ((int)resolution.width + 8))*4+2] = 255;
-//                        
-//                    }
-//                    break;
-//                }
-//            }
-//        }
-//        
-//        heights[col] = maxRedIndex;
-//        for (int i = 0; i < 300; i++) {
-//            if (maxRedIndex > resolution.height) {
-//                continue;
-//            }
-//            maxRedIndex++;
-//            data[(col + maxRedIndex * (int)resolution.width)*4] = 0;
-//            data[(col + maxRedIndex * (int)resolution.width)*4+1] = 0;
-//            data[(col + maxRedIndex * (int)resolution.width)*4+2] = 0;
-//    }
+    float hue, saturation, brightness;
+#define stateDarkBeforeRed 4
+#define stateRedAfterDark 5
+#define stateDarkafterRed 6
+    pixelCount = 0;
+    pixelsThatDontCount = 0;
+    passedStateMachine = NO;
+    
+    // finite state machine in HSV dark-bright-dark
+    for (int col = 0; col < resolution.width; col++) {
+        pixelCount = 0;
+        pixelsThatDontCount = 0;
+        lineState = beforeState;
+        passedStateMachine = NO;
+        for (int row = 0; row < resolution.height && heights[col] == 0; row++) {
+            colorAtlocation(row, col, data, resolution.width, &red, &green, &blue);
+            RGBtoHSV(red, green, blue, &hue, &saturation, &brightness);
+            
+#define HSVRED ((hue > 300.0  && hue <= 359.0 ) || (hue >= 0 && hue <= 35.0))
+#define HSVBRIGHT (brightness >= .70 && saturation >= .50)
+#define HSVDARK (brightness <= .50 && saturation <= .70)
+            
+            if (lineState == beforeState) {
+                if (HSVDARK) {
+                    pixelCount++;
+                    lineState = stateDarkBeforeRed;
+                }
+            } else if (lineState == stateDarkBeforeRed) {
+                if (HSVDARK) {
+                    pixelCount++;
+                } else if (HSVRED && HSVBRIGHT && pixelCount > 5) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = stateRedAfterDark;
+                } else if(pixelsThatDontCount > 15) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = beforeState;
+                } else {
+                    pixelsThatDontCount++;
+                }
+            } else if (lineState == stateRedAfterDark) {
+                if (HSVRED && HSVBRIGHT) {
+                    pixelCount++;
+                } else if (pixelCount <= 250 && pixelCount > 5) { //this is saying it's a thin line
+                    lineState = stateDarkafterRed;
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                } else if(pixelsThatDontCount > 15) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = beforeState;
+                } else {
+                    pixelsThatDontCount++;
+                }
+            } else if (lineState == stateDarkafterRed) {
+                if (HSVDARK) {
+                    pixelCount++;
+                    if (pixelCount > 5) {
+                        pixelCount = 0;
+                        pixelsThatDontCount = 0;
+                        lineState = beforeState;
+                        passedStateMachine = YES;
+                    }
+                } else if(pixelsThatDontCount > 15) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = beforeState;
+                } else {
+                    pixelsThatDontCount++;
+                }
+            }
+            
+            if (passedStateMachine) {
+                NSLog(@"Passed!");
+                for (int i = -20; i < 20; i++) {
+                    if ((row+i) > resolution.height) {
+                        continue;
+                    }
+                    //                    NSLog(@"width float: %f, width int: %d", resolution.width, (int)resolution.width);
+                    //                    NSLog(@"col: %d, row: %d, row+i:%d", col, row, row+i);
+                    //                    NSLog(@"index:%d", col, row, row+i);
+                    data[(col + (row+i) * ((int)resolution.width + 8))*4] = 255;
+                    data[(col + (row+i) * ((int)resolution.width + 8))*4+1] = 0;
+                    data[(col + (row+i) * ((int)resolution.width + 8))*4+2] = 255;
+                    
+                }
+                break;
+            }
+        }
+    }
+    
+#define stateBeforeBrightRed 7
+#define stateBrightRed 8
+#define stateAfterBrightRed 9
+    pixelCount = 0;
+    pixelsThatDontCount = 0;
+    passedStateMachine = NO;
+    
+    // finite state machine in HSV dark-bright-dark
+    for (int col = 0; col < resolution.width; col++) {
+        pixelCount = 0;
+        pixelsThatDontCount = 0;
+        lineState = beforeState;
+        passedStateMachine = NO;
+        for (int row = 0; row < resolution.height && heights[col] == 0; row++) {
+            colorAtlocation(row, col, data, resolution.width, &red, &green, &blue);
+            RGBtoHSV(red, green, blue, &hue, &saturation, &brightness);
+            
+            if (lineState == beforeState) {
+                if (!HSVRED) {
+                    pixelCount++;
+                    lineState = stateBeforeBrightRed;
+                }
+            } else if (lineState == stateBeforeBrightRed) {
+                if (!HSVRED) {
+                    pixelCount++;
+                } else if (HSVRED && HSVBRIGHT && pixelCount > 5) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = stateBrightRed;
+                } else if(pixelsThatDontCount > 15) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = beforeState;
+                } else {
+                    pixelsThatDontCount++;
+                }
+            } else if (lineState == stateBrightRed) {
+                if (HSVRED && HSVBRIGHT) {
+                    pixelCount++;
+                } else if (!HSVRED && pixelCount <= 250 && pixelCount > 5) { //this is saying it's a thin line
+                    lineState = stateAfterBrightRed;
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                } else if(pixelsThatDontCount > 15) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = beforeState;
+                } else {
+                    pixelsThatDontCount++;
+                }
+            } else if (lineState == stateAfterBrightRed) {
+                if (!HSVRED) {
+                    pixelCount++;
+                    if (pixelCount > 5) {
+                        pixelCount = 0;
+                        pixelsThatDontCount = 0;
+                        lineState = beforeState;
+                        passedStateMachine = YES;
+                    }
+                } else if(pixelsThatDontCount > 15) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = beforeState;
+                } else {
+                    pixelsThatDontCount++;
+                }
+            }
+            if (passedStateMachine) {
+                NSLog(@"Passed!");
+                for (int i = -20; i < 20; i++) {
+                    if ((row+i) > resolution.height) {
+                        continue;
+                    }
+                    //                    NSLog(@"width float: %f, width int: %d", resolution.width, (int)resolution.width);
+                    //                    NSLog(@"col: %d, row: %d, row+i:%d", col, row, row+i);
+                    //                    NSLog(@"index:%d", col, row, row+i);
+                    data[(col + (row+i) * ((int)resolution.width + 8))*4] = 255;
+                    data[(col + (row+i) * ((int)resolution.width + 8))*4+1] = 0;
+                    data[(col + (row+i) * ((int)resolution.width + 8))*4+2] = 255;
+                    
+                }
+                break;
+            }
+        }
+    }
+    
     if (numSuccessfulLines <= resolution.width / 3) {
         return NULL;
     } else {
@@ -460,10 +540,10 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
                 
                 if (leftIndex == 0) { // zero value on left edge
                     heights[i] = heights[rightIndex];
-//                    NSLog(@"%d %d", heights[leftIndex], heights[rightIndex]);
+                    //                    NSLog(@"%d %d", heights[leftIndex], heights[rightIndex]);
                 } else if (rightIndex == resolution.width-1) { // zero value on right edge
                     heights[i] = heights[leftIndex];
-//                    NSLog(@"%d %d", heights[leftIndex], heights[rightIndex]);
+                    //                    NSLog(@"%d %d", heights[leftIndex], heights[rightIndex]);
                 } else { // average nearest left and right non-zero values
                     int temp = (heights[leftIndex] + heights[rightIndex]) / 2;
                     heights[i] = temp;
@@ -476,8 +556,8 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
         }
         
         return heights;
-//        [tempHeight addObject:[NSNumber numberWithInt:heights[i]]];
     }
+
 }
 
 - (IBAction)renderButtonPressed:(UIButton *)sender {
@@ -497,187 +577,5 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
     }
     [super prepareForSegue:segue sender:sender];
 }
-
-UIImage * convert(unsigned char * buffer, int width, int height) {
-
-	size_t bufferLength = width * height * 4;
-	CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer, bufferLength, NULL);
-	size_t bitsPerComponent = 8;
-	size_t bitsPerPixel = 32;
-	size_t bytesPerRow = 4 * width;
-	
-	CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB();
-	if(colorSpaceRef == NULL) {
-		NSLog(@"Error allocating color space");
-		CGDataProviderRelease(provider);
-		return nil;
-	}
-	
-	CGBitmapInfo bitmapInfo = kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedLast;
-	CGColorRenderingIntent renderingIntent = kCGRenderingIntentDefault;
-	
-	CGImageRef iref = CGImageCreate(width,
-                                    height,
-                                    bitsPerComponent,
-                                    bitsPerPixel,
-                                    bytesPerRow,
-                                    colorSpaceRef,
-                                    bitmapInfo,
-                                    provider,	// data provider
-                                    NULL,		// decode
-                                    YES,			// should interpolate
-                                    renderingIntent);
-    
-	uint32_t* pixels = (uint32_t*)malloc(bufferLength);
-	
-	if(pixels == NULL) {
-		NSLog(@"Error: Memory not allocated for bitmap");
-		CGDataProviderRelease(provider);
-		CGColorSpaceRelease(colorSpaceRef);
-		CGImageRelease(iref);
-		return nil;
-	}
-	
-	CGContextRef context = CGBitmapContextCreate(pixels,
-                                                 width,
-                                                 height,
-                                                 bitsPerComponent,
-                                                 bytesPerRow,
-                                                 colorSpaceRef,
-                                                 bitmapInfo);
-	
-	if(context == NULL) {
-		NSLog(@"Error context not created");
-		free(pixels);
-	}
-	
-	UIImage *image = nil;
-	if(context) {
-		
-		CGContextDrawImage(context, CGRectMake(0.0f, 0.0f, width, height), iref);
-		
-		CGImageRef imageRef = CGBitmapContextCreateImage(context);
-		
-		// Support both iPad 3.2 and iPhone 4 Retina displays with the correct scale
-		if([UIImage respondsToSelector:@selector(imageWithCGImage:scale:orientation:)]) {
-			float scale = [[UIScreen mainScreen] scale];
-			image = [UIImage imageWithCGImage:imageRef scale:scale orientation:UIImageOrientationUp];
-		} else {
-			image = [UIImage imageWithCGImage:imageRef];
-		}
-		
-		CGImageRelease(imageRef);
-		CGContextRelease(context);
-	}
-	
-	CGColorSpaceRelease(colorSpaceRef);
-	CGImageRelease(iref);
-	CGDataProviderRelease(provider);
-	
-	if(pixels) {
-		free(pixels);
-	}
-	return image;
-}
-
-// Create a UIImage from sample buffer data
-- (UIImage *) imageFromSampleBuffer:(CMSampleBufferRef) sampleBuffer
-{
-    // Get a CMSampleBuffer's Core Video image buffer for the media data
-    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    // Lock the base address of the pixel buffer
-    CVPixelBufferLockBaseAddress(imageBuffer, 0);
-    
-    // Get the number of bytes per row for the pixel buffer
-    void *baseAddress = CVPixelBufferGetBaseAddress(imageBuffer);
-    
-    // Get the number of bytes per row for the pixel buffer
-    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
-    // Get the pixel buffer width and height
-    size_t width = CVPixelBufferGetWidth(imageBuffer);
-    size_t height = CVPixelBufferGetHeight(imageBuffer);
-    
-    // Create a device-dependent RGB color space
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    
-    // Create a bitmap graphics context with the sample buffer data
-    CGContextRef context = CGBitmapContextCreate(baseAddress, width, height, 8,
-                                                 bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-    // Create a Quartz image from the pixel data in the bitmap graphics context
-    CGImageRef quartzImage = CGBitmapContextCreateImage(context);
-    // Unlock the pixel buffer
-    CVPixelBufferUnlockBaseAddress(imageBuffer,0);
-    
-    // Free up the context and color space
-    CGContextRelease(context);
-    CGColorSpaceRelease(colorSpace);
-    
-    // Create an image object from the Quartz image
-    UIImage *image = [UIImage imageWithCGImage:quartzImage];
-    
-    // Release the Quartz image
-    CGImageRelease(quartzImage);
-    
-    return (image);
-}
-
-CGContextRef createARGBBitmapContext (CGImageRef inImage)
-{
-	CGContextRef    context = NULL;
-	CGColorSpaceRef colorSpace;
-	void *          bitmapData;
-	int             bitmapByteCount;
-	int             bitmapBytesPerRow;
-	
-	// Get image width, height. We'll use the entire image.
-	size_t pixelsWide = CGImageGetWidth(inImage);
-	size_t pixelsHigh = CGImageGetHeight(inImage);
-	
-	// Declare the number of bytes per row. Each pixel in the bitmap in this
-	// example is represented by 4 bytes; 8 bits each of red, green, blue, and
-	// alpha.
-	bitmapBytesPerRow   = (pixelsWide * 4);
-	bitmapByteCount     = (bitmapBytesPerRow * pixelsHigh);
-	
-	// Use the generic RGB color space.
-	colorSpace = CGColorSpaceCreateDeviceRGB();
-	if (colorSpace == NULL)
-	{
-		fprintf(stderr, "Error allocating color space\n");
-		return NULL;
-	}
-	
-	// Allocate memory for image data. This is the destination in memory
-	// where any drawing to the bitmap context will be rendered.
-	bitmapData = malloc( bitmapByteCount );
-	if (bitmapData == NULL)
-	{
-		fprintf (stderr, "Memory not allocated!");
-		CGColorSpaceRelease( colorSpace );
-		return NULL;
-	}
-	
-	// Create the bitmap context. We want pre-multiplied ARGB, 8-bits
-	// per component. Regardless of what the source image format is
-	// (CMYK, Grayscale, and so on) it will be converted over to the format
-	// specified here by CGBitmapContextCreate.
-	context = CGBitmapContextCreate (bitmapData,
-                                     pixelsWide,
-                                     pixelsHigh,
-                                     8,      // bits per component
-                                     bitmapBytesPerRow,
-                                     colorSpace,
-                                     kCGImageAlphaPremultipliedFirst);
-	if (context == NULL)
-	{
-		fprintf (stderr, "Context not created!");
-	}
-	
-	// Make sure and release colorspace before returning
-	CGColorSpaceRelease( colorSpace );
-	
-	return context;
-}
-
 
 @end
