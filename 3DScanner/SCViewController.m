@@ -131,23 +131,51 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         // extract needed informations from image buffer
         CVPixelBufferLockBaseAddress(pixelBuffer, 0);
 		//extracts only the luminance buffer plane
-		
-//        [self.bitmapAnalyzer loadWithPixelBuffer:pixelBuffer];
-//        [self.bitmapAnalyzer extractRedValueHeightDifferences];
-        uint8_t * pixels = malloc(CVPixelBufferGetDataSize(pixelBuffer));
-        memcpy(pixels, CVPixelBufferGetBaseAddress(pixelBuffer), CVPixelBufferGetDataSize(pixelBuffer));
-        int width = CVPixelBufferGetWidth(pixelBuffer);
-        int height = CVPixelBufferGetHeight(pixelBuffer);
-        dispatch_async(dispatch_get_main_queue(), ^(void){
-            self.testImageView.Image = convert(pixels,
-                                               width,
-                                               height);
-            free(pixels);
-        });
         
+        
+
 //        self.triangles[self.currentDataFrame] = getRedHeightsFromPixelBuffer(pixelBuffer);
         
-		CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+        uint8_t *data = malloc(CVPixelBufferGetDataSize(pixelBuffer));
+        
+        memcpy(data, CVPixelBufferGetBaseAddress(pixelBuffer), CVPixelBufferGetDataSize(pixelBuffer));        
+        
+        CGSize resolution = CGSizeMake(CVPixelBufferGetWidth(pixelBuffer),
+                                     CVPixelBufferGetHeight(pixelBuffer));
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+
+        free(getRedHeightsFromPixelBuffer(data, resolution));
+        // Get the number of bytes per row for the pixel buffer
+        size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
+        
+        // Create a device-dependent RGB color space
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        
+        
+        // Create a bitmap graphics context with the sample buffer data
+        CGContextRef context = CGBitmapContextCreate(data, resolution.width, resolution.height, 8,
+                                                     bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+        // Create a Quartz image from the pixel data in the bitmap graphics context
+        CGImageRef quartzImage = CGBitmapContextCreateImage(context);
+        // Unlock the pixel buffer
+        
+        // Free up the context and color space
+        CGContextRelease(context);
+        CGColorSpaceRelease(colorSpace);
+        
+        // Create an image object from the Quartz image
+        UIImage *image = [UIImage imageWithCGImage:quartzImage];
+        
+        // Release the Quartz image
+        CGImageRelease(quartzImage);
+
+        
+        free(data);
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            self.testImageView.Image = image;
+        });
+        
+        
 		//unlock the pixel buffer - Good practice
         self.currentDataFrame++;
 //        if (self.currentDataFrame == self.numDataFrames) {
@@ -166,24 +194,20 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
 void colorAtlocation(int row, int col, uint8_t* data, int width, int* red, int* green, int*blue)
 {
-    int index = col + row * width;
+    int index = (col + row * width)*4;
     *blue = data[index];
     *green = data[index+1];
     *red = data[index+2];
     return;
 }
 
-int * getRedHeightsFromPixelBuffer(CVPixelBufferRef pixelBuffer) {
-    uint8_t *data = CVPixelBufferGetBaseAddress(pixelBuffer);// malloc(CVPixelBufferGetDataSize(pixelBuffer));
-//    memcpy(data, CVPixelBufferGetBaseAddress(pixelBuffer), CVPixelBufferGetDataSize(pixelBuffer));
-    CGSize resolution = CGSizeMake(CVPixelBufferGetWidth(pixelBuffer),
-                                   CVPixelBufferGetHeight(pixelBuffer));
-    
+int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
+
     int red, green, blue, maxRed, maxRedIndex;
     
     int *heights = malloc(sizeof(int) * resolution.width);
     for (int col = 0; col < resolution.width; col++) {
-        maxRed = 0;
+        maxRed = maxRedIndex = 0;
         for (int row = 0; row < resolution.height; row++) {
             colorAtlocation(row,
                             col,
@@ -192,17 +216,28 @@ int * getRedHeightsFromPixelBuffer(CVPixelBufferRef pixelBuffer) {
                             &red,
                             &green,
                             &blue);
-            if (maxRed < red && green < 150 && blue < 150) {
+            if (maxRed < red && green < 70 && blue < 70) {
                 maxRed = red;
                 maxRedIndex = row;
             }
         }
         heights[col] = maxRedIndex;
+        for (int i = 0; i < 100; i++) {
+            if (maxRedIndex > resolution.height) {
+                continue;
+            }
+            maxRedIndex++;
+            data[(col + maxRedIndex * (int)resolution.width)*4] = 255;
+            data[(col + maxRedIndex * (int)resolution.width)*4+1] = 255;
+            data[(col + maxRedIndex * (int)resolution.width)*4+2] = 255;
+        }
     }
     NSMutableArray * tempHeight = [[NSMutableArray alloc] init];
     for (int i = 0; i < resolution.width; i++) {
         [tempHeight addObject:[NSNumber numberWithInt:heights[i]]];
     }
+    
+    NSLog(@"%@", tempHeight[0]);
     return heights;
 }
 
@@ -226,13 +261,14 @@ int * getRedHeightsFromPixelBuffer(CVPixelBufferRef pixelBuffer) {
 }
 
 UIImage * convert(unsigned char * buffer, int width, int height) {
+
 	size_t bufferLength = width * height * 4;
 	CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer, bufferLength, NULL);
 	size_t bitsPerComponent = 8;
 	size_t bitsPerPixel = 32;
 	size_t bytesPerRow = 4 * width;
 	
-	CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB()();
+	CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB();
 	if(colorSpaceRef == NULL) {
 		NSLog(@"Error allocating color space");
 		CGDataProviderRelease(provider);
@@ -305,5 +341,105 @@ UIImage * convert(unsigned char * buffer, int width, int height) {
 	}
 	return image;
 }
+
+// Create a UIImage from sample buffer data
+- (UIImage *) imageFromSampleBuffer:(CMSampleBufferRef) sampleBuffer
+{
+    // Get a CMSampleBuffer's Core Video image buffer for the media data
+    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    // Lock the base address of the pixel buffer
+    CVPixelBufferLockBaseAddress(imageBuffer, 0);
+    
+    // Get the number of bytes per row for the pixel buffer
+    void *baseAddress = CVPixelBufferGetBaseAddress(imageBuffer);
+    
+    // Get the number of bytes per row for the pixel buffer
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
+    // Get the pixel buffer width and height
+    size_t width = CVPixelBufferGetWidth(imageBuffer);
+    size_t height = CVPixelBufferGetHeight(imageBuffer);
+    
+    // Create a device-dependent RGB color space
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    // Create a bitmap graphics context with the sample buffer data
+    CGContextRef context = CGBitmapContextCreate(baseAddress, width, height, 8,
+                                                 bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+    // Create a Quartz image from the pixel data in the bitmap graphics context
+    CGImageRef quartzImage = CGBitmapContextCreateImage(context);
+    // Unlock the pixel buffer
+    CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+    
+    // Free up the context and color space
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+    
+    // Create an image object from the Quartz image
+    UIImage *image = [UIImage imageWithCGImage:quartzImage];
+    
+    // Release the Quartz image
+    CGImageRelease(quartzImage);
+    
+    return (image);
+}
+
+CGContextRef createARGBBitmapContext (CGImageRef inImage)
+{
+	CGContextRef    context = NULL;
+	CGColorSpaceRef colorSpace;
+	void *          bitmapData;
+	int             bitmapByteCount;
+	int             bitmapBytesPerRow;
+	
+	// Get image width, height. We'll use the entire image.
+	size_t pixelsWide = CGImageGetWidth(inImage);
+	size_t pixelsHigh = CGImageGetHeight(inImage);
+	
+	// Declare the number of bytes per row. Each pixel in the bitmap in this
+	// example is represented by 4 bytes; 8 bits each of red, green, blue, and
+	// alpha.
+	bitmapBytesPerRow   = (pixelsWide * 4);
+	bitmapByteCount     = (bitmapBytesPerRow * pixelsHigh);
+	
+	// Use the generic RGB color space.
+	colorSpace = CGColorSpaceCreateDeviceRGB();
+	if (colorSpace == NULL)
+	{
+		fprintf(stderr, "Error allocating color space\n");
+		return NULL;
+	}
+	
+	// Allocate memory for image data. This is the destination in memory
+	// where any drawing to the bitmap context will be rendered.
+	bitmapData = malloc( bitmapByteCount );
+	if (bitmapData == NULL)
+	{
+		fprintf (stderr, "Memory not allocated!");
+		CGColorSpaceRelease( colorSpace );
+		return NULL;
+	}
+	
+	// Create the bitmap context. We want pre-multiplied ARGB, 8-bits
+	// per component. Regardless of what the source image format is
+	// (CMYK, Grayscale, and so on) it will be converted over to the format
+	// specified here by CGBitmapContextCreate.
+	context = CGBitmapContextCreate (bitmapData,
+                                     pixelsWide,
+                                     pixelsHigh,
+                                     8,      // bits per component
+                                     bitmapBytesPerRow,
+                                     colorSpace,
+                                     kCGImageAlphaPremultipliedFirst);
+	if (context == NULL)
+	{
+		fprintf (stderr, "Context not created!");
+	}
+	
+	// Make sure and release colorspace before returning
+	CGColorSpaceRelease( colorSpace );
+	
+	return context;
+}
+
 
 @end

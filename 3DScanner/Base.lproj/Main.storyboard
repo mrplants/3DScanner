@@ -49,7 +49,6 @@
                             <constraint firstItem="wYR-Xa-5H8" firstAttribute="top" secondItem="pcs-2B-Uv8" secondAttribute="bottom" constant="20" symbolic="YES" id="Usp-Vu-FH8"/>
                             <constraint firstItem="nrk-7x-4fv" firstAttribute="top" secondItem="pcs-2B-Uv8" secondAttribute="bottom" constant="20" symbolic="YES" id="chZ-vy-4Xg"/>
                             <constraint firstAttribute="trailing" secondItem="nrk-7x-4fv" secondAttribute="trailing" id="d81-cF-5sN"/>
-                            <constraint firstItem="nrk-7x-4fv" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="noh-eh-eMA"/>
                             <constraint firstItem="FFD-GP-dvr" firstAttribute="top" secondItem="nrk-7x-4fv" secondAttribute="bottom" id="t1C-Z6-bgI"/>
                         </constraints>
                     </view>
