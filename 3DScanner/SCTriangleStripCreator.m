@@ -62,18 +62,31 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt);
         if (max < ABS(self.vertexArray[i])) {
             max = self.vertexArray[i];
         }
+    }
+    float proportion = ABS(1.2/max);
+    for (int i = 0; i < self.lengthOfVertexArray; i+=6) {
+        self.vertexArray[i] *= proportion;
+    }
+    
+    max = 0;
+    for (int i = 0; i < self.lengthOfVertexArray; i+=6) {
         if (max < ABS(self.vertexArray[i+1])) {
             max = self.vertexArray[i+1];
         }
+    }
+    proportion = ABS(1.2/max);
+    for (int i = 0; i < self.lengthOfVertexArray; i+=6) {
+        self.vertexArray[i+1] *= proportion;
+    }
+    
+    max = 0;
+    for (int i = 0; i < self.lengthOfVertexArray; i+=6) {
         if (max < ABS(self.vertexArray[i+2])) {
             max = self.vertexArray[i+2];
         }
-
     }
-    float proportion = ABS(0.5/max);
+    proportion = ABS(1.2/max);
     for (int i = 0; i < self.lengthOfVertexArray; i+=6) {
-        self.vertexArray[i] *= proportion;
-        self.vertexArray[i+1] *= proportion;
         self.vertexArray[i+2] *= proportion;
     }
 }
@@ -82,7 +95,7 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
     CGPoint3D newPt;
     newPt.x = pt.x;
     newPt.y = pt.y;
-    newPt.z = pt.z + 0.1;
+    newPt.z = pt.z + 0.4;
     return newPt;
 }
 
@@ -119,6 +132,8 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
             
             //calculate normal
             CGPoint3D normal = crossProductWithThreePoints(rootPoint, rightPoint, leftPoint);
+            
+            NSLog(@"index of first point: %d", (frame) * self.numberOfLinesGiven + (row*6));
 
             self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6)] = rootPoint.x;
             self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 1] = rootPoint.y;
@@ -153,6 +168,8 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
             rightPoint = shiftPointInXDirection(leftPoint);
             //calculate normal
             normal = crossProductWithThreePoints(rootPoint, rightPoint, leftPoint);
+            
+            NSLog(@"index of second point: %d", (frame) * self.numberOfLinesGiven + ((row+1)*6));
             
             self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6)] = rootPoint.x;
             self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 1] = rootPoint.y;
@@ -223,7 +240,7 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
     
     NSMutableArray *tempIndexArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < self.lengthOfIndexArray; i++) {
-        [tempIndexArray addObject:[NSNumber numberWithFloat:self.indexArray[i]]];
+        [tempIndexArray addObject:[NSNumber numberWithUnsignedInt:self.indexArray[i]]];
     }
     NSMutableArray *tempVertexArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < self.lengthOfVertexArray; i++) {
