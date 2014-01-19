@@ -136,7 +136,7 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
             //calculate normal
             CGPoint3D normal = crossProductWithThreePoints(rootPoint, rightPoint, leftPoint);
             
-            NSLog(@"index of first point: %d", (frame*6) * self.lengthOfPointsOnLine + (row*6));
+//            NSLog(@"index of first point: %d", (frame*6) * self.lengthOfPointsOnLine + (row*6));
 
             self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6)] = rootPoint.x;
             self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 1] = rootPoint.y;
@@ -172,7 +172,7 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
             //calculate normal
             normal = crossProductWithThreePoints(rootPoint, rightPoint, leftPoint);
             
-            NSLog(@"index of second point: %d", (frame*6) * self.lengthOfPointsOnLine + ((row+3)*6));
+//            NSLog(@"index of second point: %d", (frame*6) * self.lengthOfPointsOnLine + ((row+3)*6));
             
             self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6)] = rootPoint.x;
             self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 1] = rootPoint.y;
@@ -201,14 +201,14 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
 //            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+3] = frame * self.numberOfLinesGiven + (row*3)+3;
 //            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+4] = frame * self.numberOfLinesGiven + (row*3)+4;
 //            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+5] = frame * self.numberOfLinesGiven + (row*3)+5;
-            tempIndexArray = [[NSMutableArray alloc] init];
-            for (int i = 0; i < self.lengthOfIndexArray; i++) {
-                [tempIndexArray addObject:[NSNumber numberWithUnsignedInt:self.indexArray[i]]];
-            }
-            tempVertexArray = [[NSMutableArray alloc] init];
-            for (int i = 0; i < self.lengthOfVertexArray; i++) {
-                [tempVertexArray addObject:[NSNumber numberWithFloat:self.vertexArray[i]]];
-            }
+//            tempIndexArray = [[NSMutableArray alloc] init];
+//            for (int i = 0; i < self.lengthOfIndexArray; i++) {
+//                [tempIndexArray addObject:[NSNumber numberWithUnsignedInt:self.indexArray[i]]];
+//            }
+//            tempVertexArray = [[NSMutableArray alloc] init];
+//            for (int i = 0; i < self.lengthOfVertexArray; i++) {
+//                [tempVertexArray addObject:[NSNumber numberWithFloat:self.vertexArray[i]]];
+//            }
         }
     }
     
@@ -314,9 +314,9 @@ CGPoint3D CGPoint3DMake(float x, float y, float z) {
 
 CGPoint3D CGPoint3DMakeWithVector(GLKVector3 vector) {
     CGPoint3D returnPoint;
-    returnPoint.x = vector.x;
-    returnPoint.y = vector.y;
-    returnPoint.z = vector.z;
+    returnPoint.x = (vector.x);
+    returnPoint.y = (vector.y);
+    returnPoint.z = (vector.z);
     return returnPoint;
 }
 
