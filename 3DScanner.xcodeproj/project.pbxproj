@@ -30,6 +30,7 @@
 		14EA1287188A6381005AED52 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1286188A6381005AED52 /* OpenGLES.framework */; };
 		887C7F05188ACCF000BC7F6B /* SCTriangleStripCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 887C7F03188ACCF000BC7F6B /* SCTriangleStripCreator.m */; };
 		887C7F08188B648300BC7F6B /* SCMeasurementErrorCanceller.m in Sources */ = {isa = PBXBuildFile; fileRef = 887C7F07188B648300BC7F6B /* SCMeasurementErrorCanceller.m */; };
+		887C7F0A188BEBED00BC7F6B /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 887C7F09188BEBED00BC7F6B /* CoreMotion.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,7 @@
 		887C7F03188ACCF000BC7F6B /* SCTriangleStripCreator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCTriangleStripCreator.m; sourceTree = "<group>"; };
 		887C7F06188B648300BC7F6B /* SCMeasurementErrorCanceller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCMeasurementErrorCanceller.h; sourceTree = "<group>"; };
 		887C7F07188B648300BC7F6B /* SCMeasurementErrorCanceller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCMeasurementErrorCanceller.m; sourceTree = "<group>"; };
+		887C7F09188BEBED00BC7F6B /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				887C7F0A188BEBED00BC7F6B /* CoreMotion.framework in Frameworks */,
 				14397DA5188A807A0014CB27 /* QuartzCore.framework in Frameworks */,
 				14EA1287188A6381005AED52 /* OpenGLES.framework in Frameworks */,
 				14EA1285188A637A005AED52 /* GLKit.framework in Frameworks */,
@@ -135,6 +138,7 @@
 		14EA1244188A27DA005AED52 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				887C7F09188BEBED00BC7F6B /* CoreMotion.framework */,
 				14397DA4188A807A0014CB27 /* QuartzCore.framework */,
 				14EA1286188A6381005AED52 /* OpenGLES.framework */,
 				14EA1284188A637A005AED52 /* GLKit.framework */,

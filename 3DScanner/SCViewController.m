@@ -8,6 +8,7 @@
 
 #import "SCViewController.h"
 @import AVFoundation;
+@import CoreMotion;
 #import "SCBitmapData.h"
 #import "ScannerGLKViewController.h"
 #import "SCTriangleStripCreator.h"
@@ -28,9 +29,32 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *testImageView;
 
+@property (strong, nonatomic) CMMotionManager *motionManager;
+
+@property (strong, nonatomic) NSMutableArray * motionData;
+
+@property (nonatomic, assign) float refPitch;
+@property (nonatomic, assign) float refRoll;
+@property (nonatomic, assign) float refYaw;
+
 @end
 
 @implementation SCViewController
+
+- (CMMotionManager *)motionManager {
+    if (!_motionManager) _motionManager = [[CMMotionManager alloc] init];
+//    [_motionManager startAccelerometerUpdates];
+//    [_motionManager startGyroUpdates];
+    return _motionManager;
+}
+
+-(NSMutableArray *)motionData
+{
+    if (!_motionData) {
+        _motionData = [[NSMutableArray alloc] init];
+    }
+    return _motionData;
+}
 
 -(void)viewDidLayoutSubviews
 {
@@ -48,7 +72,7 @@
 - (void) setupVideoCamera
 {
 	self.videoCaptureSession = [[AVCaptureSession alloc] init];
-	self.videoCaptureSession.sessionPreset = AVCaptureSessionPresetHigh;
+	self.videoCaptureSession.sessionPreset = AVCaptureSessionPreset352x288;
 	//instantiate the capture session
 	
 	self.videoCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -125,6 +149,11 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 	{
 		NSLog(@"Time stamp: Before image analysis");
 		self.isProcessingSampleFrame = YES;
+        
+        // get accelerometer and gyro data
+//        CMAcceleration acceleration = [self.motionManager accelerometerData].acceleration;
+//        CMRotationRate gyroRotationRate = [self.motionManager gyroData].rotationRate;
+        
 		
 		// get pixel buffer reference
         CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)CMSampleBufferGetImageBuffer(sampleBuffer);
@@ -573,7 +602,7 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
         ScannerGLKViewController * vc = (ScannerGLKViewController*)segue.destinationViewController;
         vc.triangleData = [[SCTriangleStripCreator alloc] init];
         vc.triangleData.numberOfLinesGiven = self.numDataFrames;//self.bitmapAnalyzer.imageCount;
-        vc.triangleData.lengthOfPointsOnLine = 1080; //self.bitmapAnalyzer.imageWidth;
+        vc.triangleData.lengthOfPointsOnLine = 288; //self.bitmapAnalyzer.imageWidth;AVCaptureSessionPreset352x288
         vc.triangleData.heightData = self.triangles;
 //        [vc setupGL];
     }

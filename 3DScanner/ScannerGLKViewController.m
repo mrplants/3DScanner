@@ -101,8 +101,6 @@ GLuint CubeIndicesData[36] =
 {
     [super viewDidLoad];
     
-    _autoRotate = YES;
-    
     // Create context
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     if (!self.context) {
@@ -175,7 +173,7 @@ GLuint CubeIndicesData[36] =
     _projectionMatrix = GLKMatrix4MakePerspective(45.0f, (float)width/(float)height, 0.01f, 100.0f);
 
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(Tapped:)];
-    tap.numberOfTapsRequired = 2;
+    tap.numberOfTapsRequired = 1;
     [view addGestureRecognizer:tap];
 //    CubeIndicesData = self.triangleData.indexArray;
 //    CubeVertexData = self.triangleData.vertexArray;

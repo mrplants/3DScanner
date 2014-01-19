@@ -11,16 +11,21 @@
 @interface SCMeasurementErrorCanceller : NSObject
 
 // input for cancellation
-@property (nonatomic, assign) float yawAlpha;
-@property (nonatomic, assign) float pitchAlpha;
-@property (nonatomic, assign) float rollAlpha;
+@property (nonatomic, assign) float * yawAlpha;
+@property (nonatomic, assign) float * pitchAlpha;
+@property (nonatomic, assign) float * rollAlpha;
 
-@property (nonatomic, assign) float deltaX;
-@property (nonatomic, assign) float deltaY;
-@property (nonatomic, assign) float deltaZ;
+@property (nonatomic, assign) float * deltaX;
+@property (nonatomic, assign) float * deltaY;
+@property (nonatomic, assign) float * deltaZ;
 
-// method to cancel error in-place
+// method to cancel error
 - (void)cancelErrorWithHeightsArray:(int **)heights withNumOfColumns:(int)col andRows:(int)row;
 
+// output
+@property (nonatomic, assign) GLfloat * vertexArray;
+@property (nonatomic, assign) int lengthOfVertexArray;
+@property (nonatomic, assign) GLuint * indexArray;
+@property (nonatomic, assign) int lengthOfIndexArray;
 
 @end
