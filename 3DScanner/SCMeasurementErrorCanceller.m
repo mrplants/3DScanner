@@ -40,7 +40,7 @@
         vectorArray[counter] = GLKVector3Subtract(vectorArray[counter], shiftVector);
     }
     
-    
+    // yet to handle output
     
     
     
