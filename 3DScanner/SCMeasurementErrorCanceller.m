@@ -7,6 +7,8 @@
 //
 
 #import "SCMeasurementErrorCanceller.h"
+#import "SCBitmapData.h"
+#import "SCTriangleStripCreator.h"
 @import GLKit;
 
 @interface SCMeasurementErrorCanceller ()
@@ -42,6 +44,15 @@
     
     // yet to handle output
     
+    self.lengthOfVertexArray = (self.lengthOfPointsOnLine * 2 - 2) * self.numberOfLinesGiven * 6;
+    self.lengthOfIndexArray = (self.lengthOfPointsOnLine * 2 - 2) * self.numberOfLinesGiven;
+    self.vertexArray = malloc(self.lengthOfVertexArray * sizeof(GLfloat));
+    self.indexArray = malloc(self.lengthOfIndexArray * sizeof(GLuint));
+
+    // vectorArray: array of GLKVector3 that's the final vectors of transformation
+    for (int local = 0; local < counter; local++) {
+        vectorArray[counter]
+    }
     
     
 }

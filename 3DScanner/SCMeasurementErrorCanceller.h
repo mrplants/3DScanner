@@ -22,5 +22,10 @@
 // method to cancel error in-place
 - (void)cancelErrorWithHeightsArray:(int **)heights withNumOfColumns:(int)col andRows:(int)row;
 
+// output
+@property (nonatomic, assign) GLfloat * vertexArray;
+@property (nonatomic, assign) int lengthOfVertexArray;
+@property (nonatomic, assign) GLuint * indexArray;
+@property (nonatomic, assign) int lengthOfIndexArray;
 
 @end
