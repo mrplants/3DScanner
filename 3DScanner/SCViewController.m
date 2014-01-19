@@ -64,7 +64,7 @@
     [self.videoCaptureSession startRunning];
     
     self.currentDataFrame = 0;
-    self.numDataFrames = 1;
+    self.numDataFrames = 15;
     self.triangles = malloc(sizeof(int *) * self.numDataFrames);
     
 }
@@ -72,7 +72,7 @@
 - (void) setupVideoCamera
 {
 	self.videoCaptureSession = [[AVCaptureSession alloc] init];
-	self.videoCaptureSession.sessionPreset = AVCaptureSessionPreset352x288;
+	self.videoCaptureSession.sessionPreset = AVCaptureSessionPresetHigh; //AVCaptureSessionPreset352x288;
 	//instantiate the capture session
 	
 	self.videoCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -602,7 +602,7 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
         ScannerGLKViewController * vc = (ScannerGLKViewController*)segue.destinationViewController;
         vc.triangleData = [[SCTriangleStripCreator alloc] init];
         vc.triangleData.numberOfLinesGiven = self.numDataFrames;//self.bitmapAnalyzer.imageCount;
-        vc.triangleData.lengthOfPointsOnLine = 288; //self.bitmapAnalyzer.imageWidth;AVCaptureSessionPreset352x288
+        vc.triangleData.lengthOfPointsOnLine = 1080; //self.bitmapAnalyzer.imageWidth;AVCaptureSessionPreset352x288
         vc.triangleData.heightData = self.triangles;
 //        [vc setupGL];
     }
