@@ -66,21 +66,22 @@
 	[self.videoCaptureSession addInput:input];
 	//hook up the session and input
 	
-	AVCaptureVideoDataOutput *output = [[AVCaptureVideoDataOutput alloc] init];
-	output.videoSettings = [NSDictionary dictionaryWithObject: [NSNumber numberWithInt: kCVPixelFormatType_32BGRA]
+	AVCaptureVideoDataOutput *outputRGB = [[AVCaptureVideoDataOutput alloc] init];
+	outputRGB.videoSettings = [NSDictionary dictionaryWithObject: [NSNumber numberWithInt: kCVPixelFormatType_32BGRA]
                                                        forKey: (id)kCVPixelBufferPixelFormatTypeKey];
-	[self.videoCaptureSession addOutput:output];
+	[self.videoCaptureSession addOutput:outputRGB];
 	
-	dispatch_queue_t sampleBufferQueue = dispatch_queue_create("sampleBufferQueue", NULL);
+	dispatch_queue_t sampleBufferQueueRGB = dispatch_queue_create("sampleBufferQueueRGB", NULL);
 	
 	//If the camera is not put on the main queue, the app silently crashes with memory warnings when calling the main
+	
 	//Queue from the SampleBuffer delegate method.
 	//
 	//For now, if we want UI changes from analyzing the camera data, the SampleBuffer must be dispatched to the main queue.
 	
-	[output setSampleBufferDelegate:self queue: sampleBufferQueue];
+	[outputRGB setSampleBufferDelegate:self queue: sampleBufferQueueRGB];
 	
-	AVCaptureConnection *videoConnection = [output connectionWithMediaType:AVMediaTypeVideo];
+	AVCaptureConnection *videoConnection = [outputRGB connectionWithMediaType:AVMediaTypeVideo];
 	if ([videoConnection isVideoOrientationSupported])
 	{
         [videoConnection setVideoOrientation:AVCaptureVideoOrientationPortrait];
@@ -201,9 +202,38 @@ void colorAtlocation(int row, int col, uint8_t* data, int width, int* red, int* 
     return;
 }
 
+void RGBToHSV(int r, int g, int b, int *h, int *s, int *v) {
+    
+    float min, max, delta;
+    min = MIN( r, MIN(g, b ));
+    max = MAX( r, MAX(g, b ));
+    
+    *v = max;
+    delta = max - min;
+    
+    if (max != 0) {
+        *s = delta / max;
+    } else {
+        // r = g = b = 0
+        *s = 0;
+        *h = -1;
+        return;
+    }
+    if (r == max) {
+        *h = (g - b) / delta;
+    } else if (g == max) {
+        *h = 2 + (b - r) / delta;
+    } else {
+        *h = 4 + (r - g) / delta;
+    }
+    *h *= 60;
+    if (*h < 0) *h += 360;
+}
+
 int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
 
     int red, green, blue, maxRed, maxRedIndex;
+    int hue, saturation, brightness;
     
 #define beforeState 0
 #define stateFirstRed 1
@@ -219,6 +249,8 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
     BOOL passedStateMachine = NO;
     
     int *heights = malloc(sizeof(int) * resolution.width);
+    
+    // finite state machine in RGB
     for (int col = 0; col < resolution.width; col++) {
         maxRed = maxRedIndex = 0;
         pixelCount = 0;
@@ -233,7 +265,6 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
                             &red,
                             &green,
                             &blue);
-            
             
             
             if (lineState == beforeState) { //initial state of the Automota machine
@@ -285,6 +316,9 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
                     pixelsThatDontCount++;
                 }
             }
+            
+            
+            
             if (passedStateMachine) {
                 NSLog(@"Passed!");
                 for (int i = -20; i < 20; i++) {
@@ -313,6 +347,58 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
 //            data[(col + maxRedIndex * (int)resolution.width)*4+2] = 0;
 //        }
     }
+    
+    // finite state machine in HSV
+    for (int col = 0; col < resolution.width; col++) {
+        
+        int firstRowIndex = 100000, lastRowIndex = 0, pxNotCounted = 0;
+        
+        for (int row = 0; row < resolution.height; row++) {
+            colorAtlocation(row, col, data, resolution.width, &red, &green, &blue);
+            RGBToHSV(red, green, blue, &hue, &saturation, &brightness);
+            
+            if ((hue > 300 && hue <= 359) || (hue >= 0 && hue <= 35)) {
+                // it's a orange-red to purple-red color
+                if (brightness >= 80) {
+                    // it's bright enough to be considered part of laser
+                    
+                    // reset bad counter
+                    if (pxNotCounted > 0) {
+                        pxNotCounted = 0;
+                        firstRowIndex = row;
+                    }
+                    lastRowIndex = row;
+                    
+                    // if the strip is at least of some height, consider it
+                    if (lastRowIndex - firstRowIndex >= 20) {
+                        NSLog(@"Passed!");
+                        int midpt = (lastRowIndex + firstRowIndex) / 2;
+                        for (int i = -20; i < 20; i++) {
+                            if ((midpt+i) > resolution.height) {
+                                continue;
+                            }
+                            //                    NSLog(@"width float: %f, width int: %d", resolution.width, (int)resolution.width);
+                            //                    NSLog(@"col: %d, row: %d, row+i:%d", col, row, row+i);
+                            //                    NSLog(@"index:%d", col, row, row+i);
+                            data[(col + (midpt+i) * ((int)resolution.width + 8))*4] = 255;
+                            data[(col + (midpt+i) * ((int)resolution.width + 8))*4+1] = 0;
+                            data[(col + (midpt+i) * ((int)resolution.width + 8))*4+2] = 255;
+                        }
+                        
+                        break;
+                    }
+                    
+                } else {
+                    pxNotCounted++;
+                }
+            } else {
+                // the color is not right, increment pxnotcounted
+                pxNotCounted++;
+            }
+        }
+    }
+
+    
     NSMutableArray * tempHeight = [[NSMutableArray alloc] init];
     for (int i = 0; i < resolution.width; i++) {
         [tempHeight addObject:[NSNumber numberWithInt:heights[i]]];
