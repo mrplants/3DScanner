@@ -19,31 +19,37 @@
 
 - (void)cancelErrorWithHeightsArray:(int **)heights withNumOfColumns:(int)col andRows:(int)row {
     
-    double sAlpha = self.yawAlpha[row], sBeta = self.pitchAlpha[row], sGamma = self.rollAlpha[row];
+    GLKVector3 vectorArray[row * col];
     
-    GLKMatrix3 transformationMatrix = GLKMatrix3Make(cos(sAlpha)*cos(sBeta), cos(sBeta)*sin(sAlpha), -sin(sBeta),
-                                                     -cos(sGamma)*sin(sAlpha) + cos(sAlpha)*sin(sBeta)*sin(sGamma), cos(sAlpha)*cos(sGamma) + sin(sAlpha)*sin(sBeta)*sin(sGamma), cos(sBeta)*sin(sGamma),
-                                                     cos(sAlpha)*cos(sGamma)*sin(sBeta) + sin(sAlpha)*sin(sGamma), cos(sGamma)*sin(sAlpha)*sin(sBeta) - cos(sAlpha)*sin(sGamma), cos(sBeta)*cos(sGamma));
-    GLKVector3 shiftVector = GLKVector3Make(self.deltaX[row], self.deltaY[row], self.deltaZ[row]);
-    
-    int vArraySize = col * row;
-    GLKVector3 vectorArray[vArraySize];
-    
-    int counter = 0;
-    for (int localCol = 0; localCol < col; localCol++) {
-        for (int localRow = 0; localRow < row; localRow++) {
-            vectorArray[counter++] = GLKVector3Make(localCol, localRow, heights[localCol][localRow]);
+    for (int currentRow = 0; currentRow < row; currentRow++) {
+        
+        double sAlpha = self.yawAlpha[currentRow], sBeta = self.pitchAlpha[currentRow], sGamma = self.rollAlpha[currentRow];
+        
+        GLKMatrix3 transformationMatrix = GLKMatrix3Make(cos(sAlpha)*cos(sBeta), cos(sBeta)*sin(sAlpha), -sin(sBeta),
+                                                         -cos(sGamma)*sin(sAlpha) + cos(sAlpha)*sin(sBeta)*sin(sGamma), cos(sAlpha)*cos(sGamma) + sin(sAlpha)*sin(sBeta)*sin(sGamma), cos(sBeta)*sin(sGamma),
+                                                         cos(sAlpha)*cos(sGamma)*sin(sBeta) + sin(sAlpha)*sin(sGamma), cos(sGamma)*sin(sAlpha)*sin(sBeta) - cos(sAlpha)*sin(sGamma), cos(sBeta)*cos(sGamma));
+        
+        GLKVector3 shiftVector = GLKVector3Make(self.deltaX[currentRow], self.deltaY[currentRow], self.deltaZ[currentRow]);
+        
+        GLKVector3 localVectorArray[col];
+        
+        int counter = 0;
+        for (int localCol = 0; localCol < col; localCol++) {
+            for (int localRow = 0; localRow < row; localRow++) {
+                localVectorArray[counter++] = GLKVector3Make(localCol, localRow, heights[localCol][localRow]);
+            }
+        }
+        
+        GLKMatrix3MultiplyVector3Array(transformationMatrix, localVectorArray, col);
+        
+        for (int local = 0; local < counter; local++) {
+            localVectorArray[local] = GLKVector3Subtract(localVectorArray[local], shiftVector);
+            vectorArray[local + currentRow * col] = localVectorArray[local];
         }
     }
     
-    GLKMatrix3MultiplyVector3Array(transformationMatrix, vectorArray, vArraySize);
-    
-    for (int local = 0; local < counter; local++) {
-        vectorArray[counter] = GLKVector3Subtract(vectorArray[counter], shiftVector);
-    }
-    
     // yet to handle output    
-    
+    // vectorArray [row * col] consists of all vectors
 }
 
 @end
