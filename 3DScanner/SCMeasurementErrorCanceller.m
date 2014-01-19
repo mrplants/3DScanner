@@ -26,15 +26,25 @@
                                                      cos(sAlpha)*cos(sGamma)*sin(sBeta) + sin(sAlpha)*sin(sGamma), cos(sGamma)*sin(sAlpha)*sin(sBeta) - cos(sAlpha)*sin(sGamma), cos(sBeta)*cos(sGamma));
     GLKVector3 shiftVector = GLKVector3Make(self.deltaX, self.deltaY, self.deltaZ);
     
+    int vArraySize = col * row;
+    GLKVector3 vectorArray[vArraySize];
+    
+    int counter = 0;
     for (int localCol = 0; localCol < col; localCol++) {
         for (int localRow = 0; localRow < row; localRow++) {
-            GLKVector3 currentVector = GLKVector3Make(localCol, localRow, heights[localCol][localRow]); // check order
-            GLKVector3 reverseTransformedVector =
-            GLKVector3Subtract(GLKMatrix3MultiplyVector3(transformationMatrix, currentVector), shiftVector);
-            
-            
+            vectorArray[counter++] = GLKVector3Make(localCol, localRow, heights[localCol][localRow]);
         }
     }
+    
+    GLKMatrix3MultiplyVector3Array(transformationMatrix, vectorArray, vArraySize);
+    
+    for (int local = 0; local < counter; local++) {
+        vectorArray[counter] = GLKVector3Subtract(vectorArray[counter], shiftVector);
+    }
+    
+    
+    
+    
     
 }
 
