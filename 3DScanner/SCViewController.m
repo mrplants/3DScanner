@@ -72,7 +72,7 @@
 - (void) setupVideoCamera
 {
 	self.videoCaptureSession = [[AVCaptureSession alloc] init];
-	self.videoCaptureSession.sessionPreset = AVCaptureSessionPresetHigh;
+	self.videoCaptureSession.sessionPreset = AVCaptureSessionPresetLow;
 	//instantiate the capture session
 	
 	self.videoCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
