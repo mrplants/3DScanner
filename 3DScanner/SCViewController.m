@@ -41,7 +41,7 @@
     
     self.currentDataFrame = 0;
     self.numDataFrames = 15;
-    self.triangles = malloc(sizeof(CGPoint3D *) * self.numDataFrames);
+    self.triangles = malloc(sizeof(int *) * self.numDataFrames);
     
 }
 
@@ -133,19 +133,19 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         CVPixelBufferLockBaseAddress(pixelBuffer, 0);
 		//extracts only the luminance buffer plane
         
-        
-
-//        self.triangles[self.currentDataFrame] = getRedHeightsFromPixelBuffer(pixelBuffer);
-        
         uint8_t *data = malloc(CVPixelBufferGetDataSize(pixelBuffer));
         
         memcpy(data, CVPixelBufferGetBaseAddress(pixelBuffer), CVPixelBufferGetDataSize(pixelBuffer));        
         
         CGSize resolution = CGSizeMake(CVPixelBufferGetWidth(pixelBuffer),
                                      CVPixelBufferGetHeight(pixelBuffer));
-        CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 
-        free(getRedHeightsFromPixelBuffer(data, resolution));
+        self.triangles[self.currentDataFrame] = getRedHeightsFromPixelBuffer(data, resolution);
+
+        
+		//unlock the pixel buffer - Good practice
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+        
         // Get the number of bytes per row for the pixel buffer
         size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
         
@@ -171,21 +171,21 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         CGImageRelease(quartzImage);
 
         
-        free(data);
+        if (self.triangles[self.currentDataFrame] != NULL) {
+            self.currentDataFrame++;
+        }
+        
+        if (self.currentDataFrame == self.numDataFrames) {
+            [self.videoCaptureSession stopRunning];
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                [self renderButtonPressed:nil];
+            });
+        }
+		        free(data);
         dispatch_async(dispatch_get_main_queue(), ^(void){
             self.testImageView.Image = image;
         });
-        
-        
-		//unlock the pixel buffer - Good practice
-        self.currentDataFrame++;
-//        if (self.currentDataFrame == self.numDataFrames) {
-//            [self.videoCaptureSession stopRunning];
-//            dispatch_async(dispatch_get_main_queue(), ^(void){
-//                [self renderButtonPressed:nil];
-//            });
-//        }
-		
+
 		self.isProcessingSampleFrame = NO;
 		//allow other frame analyses
 		
@@ -320,7 +320,8 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
             
             
             if (passedStateMachine) {
-                NSLog(@"Passed!");
+//                NSLog(@"Passed!");
+                numSuccessfulLines++;
                 for (int i = -20; i < 20; i++) {
                     if ((row+i) > resolution.height) {
                         continue;
@@ -331,6 +332,7 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
                     data[(col + (row+i) * ((int)resolution.width + 8))*4] = 0;
                     data[(col + (row+i) * ((int)resolution.width + 8))*4+1] = 255;
                     data[(col + (row+i) * ((int)resolution.width + 8))*4+2] = 255;
+                    heights[col] = row;
 
                 }
                 break;
@@ -452,9 +454,6 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
     for (int i = 0; i < resolution.width; i++) {
         [tempHeight addObject:[NSNumber numberWithInt:heights[i]]];
     }
-    
-    NSLog(@"%@", tempHeight[0]);
-    return heights;
 }
 
 - (IBAction)renderButtonPressed:(UIButton *)sender {
@@ -468,7 +467,7 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
         ScannerGLKViewController * vc = (ScannerGLKViewController*)segue.destinationViewController;
         vc.triangleData = [[SCTriangleStripCreator alloc] init];
         vc.triangleData.numberOfLinesGiven = self.numDataFrames;//self.bitmapAnalyzer.imageCount;
-        vc.triangleData.lengthOfPointsOnLine = 1920; //self.bitmapAnalyzer.imageWidth;
+        vc.triangleData.lengthOfPointsOnLine = 1080; //self.bitmapAnalyzer.imageWidth;
         vc.triangleData.heightData = self.triangles;
 //        [vc setupGL];
     }
