@@ -194,7 +194,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
 void colorAtlocation(int row, int col, uint8_t* data, int width, int* red, int* green, int*blue)
 {
-    int index = (col + row * width)*4;
+    int index = (col + row * (8+width))*4;
     *blue = data[index];
     *green = data[index+1];
     *red = data[index+2];
@@ -205,9 +205,26 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
 
     int red, green, blue, maxRed, maxRedIndex;
     
+#define beforeState 0
+#define stateFirstRed 1
+#define statewhite 2
+#define stateSecondRed 3
+    
+#define RED (red > 130 && green < 80 && blue < 80)
+#define WHITE (red > 120 && green > 120 && blue > 120)
+    
+    int lineState = beforeState;
+    int pixelCount = 0;
+    int pixelsThatDontCount = 0;
+    BOOL passedStateMachine = NO;
+    
     int *heights = malloc(sizeof(int) * resolution.width);
     for (int col = 0; col < resolution.width; col++) {
         maxRed = maxRedIndex = 0;
+        pixelCount = 0;
+        pixelsThatDontCount = 0;
+        lineState = beforeState;
+        passedStateMachine = NO;
         for (int row = 0; row < resolution.height; row++) {
             colorAtlocation(row,
                             col,
@@ -216,21 +233,85 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
                             &red,
                             &green,
                             &blue);
-            if (maxRed < red && green < 70 && blue < 70) {
-                maxRed = red;
-                maxRedIndex = row;
+            
+            
+            
+            if (lineState == beforeState) { //initial state of the Automota machine
+                if (RED) { //red pixel found
+                    pixelCount++;
+                    lineState = stateFirstRed;
+                }
+            } else if (lineState == stateFirstRed) {//found a line of red pixels
+                if (RED) {
+                    pixelCount++;
+                } else if (WHITE && pixelCount > 5) {
+                    pixelCount = 1;
+                    pixelsThatDontCount = 0;
+                    lineState = statewhite;
+                }else if(pixelsThatDontCount > 10) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = beforeState;
+                } else {
+                    pixelsThatDontCount++;
+                }
+            } else if (lineState == statewhite) {
+                if (WHITE) {
+                    pixelCount++;
+                } else if (RED && pixelCount <= 350) {
+                    pixelCount = 1;
+                    pixelsThatDontCount = 0;
+                    lineState = stateSecondRed;
+                }else if(pixelsThatDontCount > 10) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = beforeState;
+                } else {
+                    pixelsThatDontCount++;
+                }
+            } else if (lineState == stateSecondRed) {
+                if (RED) {
+                    pixelCount++;
+                } else if (pixelCount > 2) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = beforeState;
+                    passedStateMachine = YES;
+                }else if(pixelsThatDontCount > 20) {
+                    pixelCount = 0;
+                    pixelsThatDontCount = 0;
+                    lineState = beforeState;
+                } else {
+                    pixelsThatDontCount++;
+                }
+            }
+            if (passedStateMachine) {
+                NSLog(@"Passed!");
+                for (int i = -20; i < 20; i++) {
+                    if ((row+i) > resolution.height) {
+                        continue;
+                    }
+//                    NSLog(@"width float: %f, width int: %d", resolution.width, (int)resolution.width);
+//                    NSLog(@"col: %d, row: %d, row+i:%d", col, row, row+i);
+//                    NSLog(@"index:%d", col, row, row+i);
+                    data[(col + (row+i) * ((int)resolution.width + 8))*4] = 0;
+                    data[(col + (row+i) * ((int)resolution.width + 8))*4+1] = 255;
+                    data[(col + (row+i) * ((int)resolution.width + 8))*4+2] = 255;
+
+                }
+                break;
             }
         }
-        heights[col] = maxRedIndex;
-        for (int i = 0; i < 100; i++) {
-            if (maxRedIndex > resolution.height) {
-                continue;
-            }
-            maxRedIndex++;
-            data[(col + maxRedIndex * (int)resolution.width)*4] = 255;
-            data[(col + maxRedIndex * (int)resolution.width)*4+1] = 255;
-            data[(col + maxRedIndex * (int)resolution.width)*4+2] = 255;
-        }
+//        heights[col] = maxRedIndex;
+//        for (int i = 0; i < 300; i++) {
+//            if (maxRedIndex > resolution.height) {
+//                continue;
+//            }
+//            maxRedIndex++;
+//            data[(col + maxRedIndex * (int)resolution.width)*4] = 0;
+//            data[(col + maxRedIndex * (int)resolution.width)*4+1] = 0;
+//            data[(col + maxRedIndex * (int)resolution.width)*4+2] = 0;
+//        }
     }
     NSMutableArray * tempHeight = [[NSMutableArray alloc] init];
     for (int i = 0; i < resolution.width; i++) {
@@ -240,7 +321,6 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
     NSLog(@"%@", tempHeight[0]);
     return heights;
 }
-
 
 - (IBAction)renderButtonPressed:(UIButton *)sender {
 //    self.triangles = [self.bitmapAnalyzer generateTriangleData];
