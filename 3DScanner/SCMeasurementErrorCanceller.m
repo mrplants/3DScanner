@@ -19,12 +19,12 @@
 
 - (void)cancelErrorWithHeightsArray:(int **)heights withNumOfColumns:(int)col andRows:(int)row {
     
-    double sAlpha = self.yawAlpha, sBeta = self.pitchAlpha, sGamma = self.rollAlpha;
+    double sAlpha = self.yawAlpha[row], sBeta = self.pitchAlpha[row], sGamma = self.rollAlpha[row];
     
     GLKMatrix3 transformationMatrix = GLKMatrix3Make(cos(sAlpha)*cos(sBeta), cos(sBeta)*sin(sAlpha), -sin(sBeta),
                                                      -cos(sGamma)*sin(sAlpha) + cos(sAlpha)*sin(sBeta)*sin(sGamma), cos(sAlpha)*cos(sGamma) + sin(sAlpha)*sin(sBeta)*sin(sGamma), cos(sBeta)*sin(sGamma),
                                                      cos(sAlpha)*cos(sGamma)*sin(sBeta) + sin(sAlpha)*sin(sGamma), cos(sGamma)*sin(sAlpha)*sin(sBeta) - cos(sAlpha)*sin(sGamma), cos(sBeta)*cos(sGamma));
-    GLKVector3 shiftVector = GLKVector3Make(self.deltaX, self.deltaY, self.deltaZ);
+    GLKVector3 shiftVector = GLKVector3Make(self.deltaX[row], self.deltaY[row], self.deltaZ[row]);
     
     int vArraySize = col * row;
     GLKVector3 vectorArray[vArraySize];
@@ -42,18 +42,7 @@
         vectorArray[counter] = GLKVector3Subtract(vectorArray[counter], shiftVector);
     }
     
-    // yet to handle output
-    
-    self.lengthOfVertexArray = (self.lengthOfPointsOnLine * 2 - 2) * self.numberOfLinesGiven * 6;
-    self.lengthOfIndexArray = (self.lengthOfPointsOnLine * 2 - 2) * self.numberOfLinesGiven;
-    self.vertexArray = malloc(self.lengthOfVertexArray * sizeof(GLfloat));
-    self.indexArray = malloc(self.lengthOfIndexArray * sizeof(GLuint));
-
-    // vectorArray: array of GLKVector3 that's the final vectors of transformation
-    for (int local = 0; local < counter; local++) {
-        vectorArray[counter]
-    }
-    
+    // yet to handle output    
     
 }
 
