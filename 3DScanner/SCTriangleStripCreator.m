@@ -91,7 +91,7 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt);
     }
 }
 
-CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
+CGPoint3D m_shiftPointInXDirection(CGPoint3D pt) {
     CGPoint3D newPt;
     newPt.x = pt.x;
     newPt.y = pt.y;
@@ -297,11 +297,11 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
 //    self.indexArray[2] = 2;
 }
 
-CGPoint3D crossProductWithThreePoints(CGPoint3D root, CGPoint3D right, CGPoint3D left) {
+CGPoint3D m_crossProductWithThreePoints(CGPoint3D root, CGPoint3D right, CGPoint3D left) {
     GLKVector3 rightVector = GLKVector3Make(right.x - root.x, right.y - root.y, right.z - root.z);
     GLKVector3 leftVector = GLKVector3Make(left.x - root.x, left.y - root.y, left.z - root.z);
     
-    return CGPoint3DMakeWithVector(GLKVector3Normalize(GLKVector3CrossProduct(leftVector, rightVector)));
+    return m_CGPoint3DMakeWithVector(GLKVector3Normalize(GLKVector3CrossProduct(leftVector, rightVector)));
 }
 
 CGPoint3D CGPoint3DMake(float x, float y, float z) {
@@ -312,7 +312,7 @@ CGPoint3D CGPoint3DMake(float x, float y, float z) {
     return returnPoint;
 }
 
-CGPoint3D CGPoint3DMakeWithVector(GLKVector3 vector) {
+CGPoint3D m_CGPoint3DMakeWithVector(GLKVector3 vector) {
     CGPoint3D returnPoint;
     returnPoint.x = (vector.x);
     returnPoint.y = (vector.y);

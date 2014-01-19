@@ -64,7 +64,7 @@
     [self.videoCaptureSession startRunning];
     
     self.currentDataFrame = 0;
-    self.numDataFrames = 15;
+    self.numDataFrames = 1;
     self.triangles = malloc(sizeof(int *) * self.numDataFrames);
     
 }
