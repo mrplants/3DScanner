@@ -232,8 +232,7 @@ void RGBToHSV(int r, int g, int b, float *h, float *s, float *v) {
 
 int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
 
-    int red, green, blue, maxRed, maxRedIndex;
-//    float hue, saturation, brightness;
+    int red, green, blue, maxRed, maxRedIndex, numSuccessfulLines = 0;
     
 #define beforeState 0
 #define stateFirstRed 1
@@ -332,22 +331,21 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
                     data[(col + (row+i) * ((int)resolution.width + 8))*4] = 0;
                     data[(col + (row+i) * ((int)resolution.width + 8))*4+1] = 255;
                     data[(col + (row+i) * ((int)resolution.width + 8))*4+2] = 255;
-                    heights[col] = row;
-
                 }
+                heights[col] = row;
                 break;
             }
         }
-        heights[col] = maxRedIndex;
-        for (int i = 0; i < 300; i++) {
-            if (maxRedIndex > resolution.height) {
-                continue;
-            }
-            maxRedIndex++;
-            data[(col + maxRedIndex * (int)resolution.width)*4] = 0;
-            data[(col + maxRedIndex * (int)resolution.width)*4+1] = 0;
-            data[(col + maxRedIndex * (int)resolution.width)*4+2] = 0;
-        }
+////        heights[col] = maxRedIndex;
+////        for (int i = 0; i < 300; i++) {
+////            if (maxRedIndex > resolution.height) {
+////                continue;
+////            }
+//            maxRedIndex++;
+//            data[(col + maxRedIndex * (int)resolution.width)*4] = 0;
+//            data[(col + maxRedIndex * (int)resolution.width)*4+1] = 0;
+//            data[(col + maxRedIndex * (int)resolution.width)*4+2] = 0;
+     //   }
     }
     
 //    // finite state machine in HSV
@@ -447,12 +445,38 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
 //            data[(col + maxRedIndex * (int)resolution.width)*4] = 0;
 //            data[(col + maxRedIndex * (int)resolution.width)*4+1] = 0;
 //            data[(col + maxRedIndex * (int)resolution.width)*4+2] = 0;
-//        }
 //    }
-
-    NSMutableArray * tempHeight = [[NSMutableArray alloc] init];
-    for (int i = 0; i < resolution.width; i++) {
-        [tempHeight addObject:[NSNumber numberWithInt:heights[i]]];
+    if (numSuccessfulLines <= resolution.width / 3) {
+        return NULL;
+    } else {
+        //need to take out the zeroes
+        for (int i = 0; i < resolution.width; i++) {
+            if (heights[i] == 0) {
+                int leftIndex, rightIndex;
+                
+                // j and k are nearest left and right indices with non-zero values
+                for (leftIndex = i; heights[leftIndex] == 0 && leftIndex > 0; leftIndex--) {}
+                for (rightIndex = i; heights[rightIndex] == 0 && rightIndex < resolution.width - 1; rightIndex++) {}
+                
+                if (leftIndex == 0) { // zero value on left edge
+                    heights[i] = heights[rightIndex];
+//                    NSLog(@"%d %d", heights[leftIndex], heights[rightIndex]);
+                } else if (rightIndex == resolution.width-1) { // zero value on right edge
+                    heights[i] = heights[leftIndex];
+//                    NSLog(@"%d %d", heights[leftIndex], heights[rightIndex]);
+                } else { // average nearest left and right non-zero values
+                    int temp = (heights[leftIndex] + heights[rightIndex]) / 2;
+                    heights[i] = temp;
+                }
+            }
+        }
+        NSMutableArray * tempHeight = [[NSMutableArray alloc] init];
+        for (int i = 0; i < resolution.width; i++) {
+            [tempHeight addObject:[NSNumber numberWithInt:heights[i]]];
+        }
+        
+        return heights;
+//        [tempHeight addObject:[NSNumber numberWithInt:heights[i]]];
     }
 }
 
