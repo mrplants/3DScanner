@@ -31,15 +31,29 @@
 
 @property (strong, nonatomic) CMMotionManager *motionManager;
 
+@property (strong, nonatomic) NSMutableArray * motionData;
+
+@property (nonatomic, assign) float refPitch;
+@property (nonatomic, assign) float refRoll;
+@property (nonatomic, assign) float refYaw;
+
 @end
 
 @implementation SCViewController
 
 - (CMMotionManager *)motionManager {
     if (!_motionManager) _motionManager = [[CMMotionManager alloc] init];
-    [_motionManager startAccelerometerUpdates];
-    [_motionManager startGyroUpdates];
+//    [_motionManager startAccelerometerUpdates];
+//    [_motionManager startGyroUpdates];
     return _motionManager;
+}
+
+-(NSMutableArray *)motionData
+{
+    if (!_motionData) {
+        _motionData = [[NSMutableArray alloc] init];
+    }
+    return _motionData;
 }
 
 -(void)viewDidLayoutSubviews
@@ -137,8 +151,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		self.isProcessingSampleFrame = YES;
         
         // get accelerometer and gyro data
-        CMAcceleration acceleration = [self.motionManager accelerometerData].acceleration;
-        CMRotationRate gyroRotationRate = [self.motionManager gyroData].rotationRate;
+//        CMAcceleration acceleration = [self.motionManager accelerometerData].acceleration;
+//        CMRotationRate gyroRotationRate = [self.motionManager gyroData].rotationRate;
         
 		
 		// get pixel buffer reference
@@ -186,9 +200,17 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         CGImageRelease(quartzImage);
 
         
-//        if (self.triangles[self.currentDataFrame] != NULL) {
-//            self.currentDataFrame++;
-//        }
+        if (self.triangles[self.currentDataFrame] != NULL) {
+            self.currentDataFrame++;
+            if (self.currentDataFrame == 1) {
+//                self.refPitch = [self.motionManager gyroData].rotationRate.x;
+//                self.refYaw = [self.motionManager gyroData].rotationRate.y;
+//                self.refRoll = [self.motionManager gyroData].rotationRate.z;
+//                
+//                [self.motionManager accelerometerData].acceleration;
+
+            }
+        }
         
         if (self.currentDataFrame == self.numDataFrames) {
             [self.videoCaptureSession stopRunning];
