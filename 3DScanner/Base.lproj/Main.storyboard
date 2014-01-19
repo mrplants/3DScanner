@@ -17,10 +17,18 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nrk-7x-4fv">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <rect key="frame" x="0.0" y="72" width="320" height="496"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zUW-bc-Uog">
+                                <rect key="frame" x="20" y="360" width="200" height="200"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="Msk-CA-Mo7"/>
+                                    <constraint firstAttribute="height" constant="200" id="g0n-6z-wCN"/>
+                                </constraints>
+                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wYR-Xa-5H8">
                                 <rect key="frame" x="143" y="72" width="35" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -36,7 +44,10 @@
                         <constraints>
                             <constraint firstItem="nrk-7x-4fv" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="4oo-dw-hrh"/>
                             <constraint firstAttribute="centerX" secondItem="wYR-Xa-5H8" secondAttribute="centerX" id="5dg-2s-T18"/>
+                            <constraint firstItem="FFD-GP-dvr" firstAttribute="top" secondItem="zUW-bc-Uog" secondAttribute="bottom" constant="20" symbolic="YES" id="PJM-SQ-5Da"/>
+                            <constraint firstItem="zUW-bc-Uog" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="20" symbolic="YES" id="SDC-D2-5ax"/>
                             <constraint firstItem="wYR-Xa-5H8" firstAttribute="top" secondItem="pcs-2B-Uv8" secondAttribute="bottom" constant="20" symbolic="YES" id="Usp-Vu-FH8"/>
+                            <constraint firstItem="nrk-7x-4fv" firstAttribute="top" secondItem="pcs-2B-Uv8" secondAttribute="bottom" constant="20" symbolic="YES" id="chZ-vy-4Xg"/>
                             <constraint firstAttribute="trailing" secondItem="nrk-7x-4fv" secondAttribute="trailing" id="d81-cF-5sN"/>
                             <constraint firstItem="nrk-7x-4fv" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="noh-eh-eMA"/>
                             <constraint firstItem="FFD-GP-dvr" firstAttribute="top" secondItem="nrk-7x-4fv" secondAttribute="bottom" id="t1C-Z6-bgI"/>
@@ -44,6 +55,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="jKf-36-2l6"/>
                     <connections>
+                        <outlet property="testImageView" destination="zUW-bc-Uog" id="Wo9-SX-T9F"/>
                         <outlet property="videoPreviewView" destination="nrk-7x-4fv" id="htF-h3-AWk"/>
                         <segue destination="4fc-cq-kU5" kind="push" identifier="renderSegue" id="9TR-b4-k4D"/>
                     </connections>
@@ -92,6 +104,7 @@
             <point key="canvasLocation" x="307" y="39"/>
         </scene>
     </scenes>
+    <color key="tintColor" red="0.98039215686274506" green="0.58823529411764708" blue="0.58823529411764708" alpha="1" colorSpace="calibratedRGB"/>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

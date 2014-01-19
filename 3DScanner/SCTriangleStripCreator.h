@@ -13,6 +13,7 @@
 
 // array of points - input
 @property (nonatomic, assign) CGPoint3D ** pointsArrayOfLines;
+@property (nonatomic, assign) int ** heightData;
 @property (nonatomic, assign) int numberOfLinesGiven;
 @property (nonatomic, assign) int lengthOfPointsOnLine;
 

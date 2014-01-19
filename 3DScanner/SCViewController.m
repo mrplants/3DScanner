@@ -20,9 +20,13 @@
 @property (nonatomic, strong) AVCaptureDevice *videoCaptureDevice;
 @property (weak, nonatomic) IBOutlet UIView *videoPreviewView;
 @property (nonatomic) BOOL isProcessingSampleFrame;
-@property (nonatomic, strong) SCBitmapData *bitmapAnalyzer;
+//@property (nonatomic, strong) SCBitmapData *bitmapAnalyzer;
 
-@property (nonatomic, assign) CGPoint3D ** triangles;
+@property (nonatomic, assign) int ** triangles;
+@property (nonatomic, assign) int currentDataFrame;
+@property (nonatomic, assign) int numDataFrames;
+
+@property (weak, nonatomic) IBOutlet UIImageView *testImageView;
 
 @end
 
@@ -32,8 +36,12 @@
 {
     [super viewDidLayoutSubviews];
     [self setupVideoCamera];
-    self.bitmapAnalyzer = [[SCBitmapData alloc] init];
+//    self.bitmapAnalyzer = [[SCBitmapData alloc] init];
     [self.videoCaptureSession startRunning];
+    
+    self.currentDataFrame = 0;
+    self.numDataFrames = 15;
+    self.triangles = malloc(sizeof(CGPoint3D *) * self.numDataFrames);
     
 }
 
@@ -124,18 +132,30 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         CVPixelBufferLockBaseAddress(pixelBuffer, 0);
 		//extracts only the luminance buffer plane
 		
-        [self.bitmapAnalyzer loadWithPixelBuffer:pixelBuffer];
-        [self.bitmapAnalyzer extractRedValueHeightDifferences];
-		
+//        [self.bitmapAnalyzer loadWithPixelBuffer:pixelBuffer];
+//        [self.bitmapAnalyzer extractRedValueHeightDifferences];
+        uint8_t * pixels = malloc(CVPixelBufferGetDataSize(pixelBuffer));
+        memcpy(pixels, CVPixelBufferGetBaseAddress(pixelBuffer), CVPixelBufferGetDataSize(pixelBuffer));
+        int width = CVPixelBufferGetWidth(pixelBuffer);
+        int height = CVPixelBufferGetHeight(pixelBuffer);
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            self.testImageView.Image = convert(pixels,
+                                               width,
+                                               height);
+            free(pixels);
+        });
+        
+//        self.triangles[self.currentDataFrame] = getRedHeightsFromPixelBuffer(pixelBuffer);
+        
 		CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 		//unlock the pixel buffer - Good practice
-        
-        if (self.bitmapAnalyzer.imageCount == 1) {
-            [self.videoCaptureSession stopRunning];
-            dispatch_async(dispatch_get_main_queue(), ^(void){
-                [self renderButtonPressed:nil];
-            });
-        }
+        self.currentDataFrame++;
+//        if (self.currentDataFrame == self.numDataFrames) {
+//            [self.videoCaptureSession stopRunning];
+//            dispatch_async(dispatch_get_main_queue(), ^(void){
+//                [self renderButtonPressed:nil];
+//            });
+//        }
 		
 		self.isProcessingSampleFrame = NO;
 		//allow other frame analyses
@@ -144,8 +164,51 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 	}
 }
 
+void colorAtlocation(int row, int col, uint8_t* data, int width, int* red, int* green, int*blue)
+{
+    int index = col + row * width;
+    *blue = data[index];
+    *green = data[index+1];
+    *red = data[index+2];
+    return;
+}
+
+int * getRedHeightsFromPixelBuffer(CVPixelBufferRef pixelBuffer) {
+    uint8_t *data = CVPixelBufferGetBaseAddress(pixelBuffer);// malloc(CVPixelBufferGetDataSize(pixelBuffer));
+//    memcpy(data, CVPixelBufferGetBaseAddress(pixelBuffer), CVPixelBufferGetDataSize(pixelBuffer));
+    CGSize resolution = CGSizeMake(CVPixelBufferGetWidth(pixelBuffer),
+                                   CVPixelBufferGetHeight(pixelBuffer));
+    
+    int red, green, blue, maxRed, maxRedIndex;
+    
+    int *heights = malloc(sizeof(int) * resolution.width);
+    for (int col = 0; col < resolution.width; col++) {
+        maxRed = 0;
+        for (int row = 0; row < resolution.height; row++) {
+            colorAtlocation(row,
+                            col,
+                            data,
+                            resolution.width,
+                            &red,
+                            &green,
+                            &blue);
+            if (maxRed < red && green < 150 && blue < 150) {
+                maxRed = red;
+                maxRedIndex = row;
+            }
+        }
+        heights[col] = maxRedIndex;
+    }
+    NSMutableArray * tempHeight = [[NSMutableArray alloc] init];
+    for (int i = 0; i < resolution.width; i++) {
+        [tempHeight addObject:[NSNumber numberWithInt:heights[i]]];
+    }
+    return heights;
+}
+
+
 - (IBAction)renderButtonPressed:(UIButton *)sender {
-    self.triangles = [self.bitmapAnalyzer generateTriangleData];
+//    self.triangles = [self.bitmapAnalyzer generateTriangleData];
     [self performSegueWithIdentifier:@"renderSegue" sender:self];
 }
 
@@ -154,13 +217,93 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     if ([segue.identifier isEqualToString:@"renderSegue"]) {
         ScannerGLKViewController * vc = (ScannerGLKViewController*)segue.destinationViewController;
         vc.triangleData = [[SCTriangleStripCreator alloc] init];
-        vc.triangleData.numberOfLinesGiven = self.bitmapAnalyzer.imageCount;
-        vc.triangleData.lengthOfPointsOnLine = self.bitmapAnalyzer.imageWidth;
-        vc.triangleData.pointsArrayOfLines = self.triangles;
+        vc.triangleData.numberOfLinesGiven = self.numDataFrames;//self.bitmapAnalyzer.imageCount;
+        vc.triangleData.lengthOfPointsOnLine = 1920; //self.bitmapAnalyzer.imageWidth;
+        vc.triangleData.heightData = self.triangles;
 //        [vc setupGL];
     }
     [super prepareForSegue:segue sender:sender];
 }
 
+UIImage * convert(unsigned char * buffer, int width, int height) {
+	size_t bufferLength = width * height * 4;
+	CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer, bufferLength, NULL);
+	size_t bitsPerComponent = 8;
+	size_t bitsPerPixel = 32;
+	size_t bytesPerRow = 4 * width;
+	
+	CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB()();
+	if(colorSpaceRef == NULL) {
+		NSLog(@"Error allocating color space");
+		CGDataProviderRelease(provider);
+		return nil;
+	}
+	
+	CGBitmapInfo bitmapInfo = kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedLast;
+	CGColorRenderingIntent renderingIntent = kCGRenderingIntentDefault;
+	
+	CGImageRef iref = CGImageCreate(width,
+                                    height,
+                                    bitsPerComponent,
+                                    bitsPerPixel,
+                                    bytesPerRow,
+                                    colorSpaceRef,
+                                    bitmapInfo,
+                                    provider,	// data provider
+                                    NULL,		// decode
+                                    YES,			// should interpolate
+                                    renderingIntent);
+    
+	uint32_t* pixels = (uint32_t*)malloc(bufferLength);
+	
+	if(pixels == NULL) {
+		NSLog(@"Error: Memory not allocated for bitmap");
+		CGDataProviderRelease(provider);
+		CGColorSpaceRelease(colorSpaceRef);
+		CGImageRelease(iref);
+		return nil;
+	}
+	
+	CGContextRef context = CGBitmapContextCreate(pixels,
+                                                 width,
+                                                 height,
+                                                 bitsPerComponent,
+                                                 bytesPerRow,
+                                                 colorSpaceRef,
+                                                 bitmapInfo);
+	
+	if(context == NULL) {
+		NSLog(@"Error context not created");
+		free(pixels);
+	}
+	
+	UIImage *image = nil;
+	if(context) {
+		
+		CGContextDrawImage(context, CGRectMake(0.0f, 0.0f, width, height), iref);
+		
+		CGImageRef imageRef = CGBitmapContextCreateImage(context);
+		
+		// Support both iPad 3.2 and iPhone 4 Retina displays with the correct scale
+		if([UIImage respondsToSelector:@selector(imageWithCGImage:scale:orientation:)]) {
+			float scale = [[UIScreen mainScreen] scale];
+			image = [UIImage imageWithCGImage:imageRef scale:scale orientation:UIImageOrientationUp];
+		} else {
+			image = [UIImage imageWithCGImage:imageRef];
+		}
+		
+		CGImageRelease(imageRef);
+		CGContextRelease(context);
+	}
+	
+	CGColorSpaceRelease(colorSpaceRef);
+	CGImageRelease(iref);
+	CGDataProviderRelease(provider);
+	
+	if(pixels) {
+		free(pixels);
+	}
+	return image;
+}
 
 @end

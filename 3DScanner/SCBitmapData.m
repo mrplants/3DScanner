@@ -21,33 +21,41 @@
                                  CVPixelBufferGetHeight(pixelBuffer));
 }
 
-void colorAtlocation(int row, int col, uint8_t* data, int width, int* red, int* green, int*blue)
-{
-//    int index;
-//    Color pixelColor;
+//void colorAtlocation(int row, int col, uint8_t* data, int width, int* red, int* green, int*blue)
+//{
+//    *red = data[col + row * width+1];
+//    *green = data[col + row * width+2];
+//    *blue = data[col + row * width+3];
+//}
+//
+//int * getRedHeightsFromPixelBuffer(CVPixelBufferRef pixelBuffer) {
+//    uint8_t *data = malloc(CVPixelBufferGetDataSize(pixelBuffer));
+//    memcpy(data, CVPixelBufferGetBaseAddress(pixelBuffer), CVPixelBufferGetDataSize(pixelBuffer));
+//    CGSize resolution = CGSizeMake(CVPixelBufferGetWidth(pixelBuffer),
+//                                   CVPixelBufferGetHeight(pixelBuffer));
 //    
-//    // TODO should handle erroneous input better
-//    pixelColor.red = -1;
-//    pixelColor.green = -1;
-//    pixelColor.blue = -1;
-//    
-//    if (data != NULL)
-//    {
-//        // Check that the given coordinates are within the image
-//        if (point.x <= resolution.width && point.x >= 0 && point.y >= 0 && point.y <= resolution.height)
-//        {
-//            index = (point.x + point.y * resolution.width) * 4;
-//            pixelColor.red = data[index+1];
-//            pixelColor.green = data[index+2];
-//            pixelColor.blue = data[index+3];
+//    int red, green, blue, maxRed, maxRedIndex;
+//
+//    int *heights = malloc(sizeof(int) * resolution.height);
+//    for (int row = 0; row < resolution.height; row++) {
+//        maxRed = 0;
+//        for (int col = 0; col < resolution.width; col++) {
+//            colorAtlocation(row,
+//                            col,
+//                            data,
+//                            resolution.width,
+//                            &red,
+//                            &green,
+//                            &blue);
+//            if (maxRed < red) {
+//                maxRed = red;
+//                maxRedIndex = (col + row * resolution.width);
+//            }
 //        }
-//        
+//        heights[row] = maxRedIndex;
 //    }
-//    return pixelColor;
-    *red = data[row + col * width+1];
-    *green = data[row + col * width+2];
-    *blue = data[row + col * width+3];
-}
+//    return heights;
+//}
 
 -(NSArray *)extractRedValueHeightDifferences
 {
