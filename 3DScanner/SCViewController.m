@@ -40,7 +40,7 @@
     [self.videoCaptureSession startRunning];
     
     self.currentDataFrame = 0;
-    self.numDataFrames = 15;
+    self.numDataFrames = 2;
     self.triangles = malloc(sizeof(int *) * self.numDataFrames);
     
 }
@@ -298,9 +298,8 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
                     data[(col + (row+i) * ((int)resolution.width + 8))*4] = 0;
                     data[(col + (row+i) * ((int)resolution.width + 8))*4+1] = 255;
                     data[(col + (row+i) * ((int)resolution.width + 8))*4+2] = 255;
-                    heights[col] = row;
-
                 }
+                heights[col] = row;
                 break;
             }
         }
