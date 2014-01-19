@@ -29,6 +29,7 @@
 		14EA1285188A637A005AED52 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1284188A637A005AED52 /* GLKit.framework */; };
 		14EA1287188A6381005AED52 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14EA1286188A6381005AED52 /* OpenGLES.framework */; };
 		887C7F05188ACCF000BC7F6B /* SCTriangleStripCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 887C7F03188ACCF000BC7F6B /* SCTriangleStripCreator.m */; };
+		887C7F08188B648300BC7F6B /* SCMeasurementErrorCanceller.m in Sources */ = {isa = PBXBuildFile; fileRef = 887C7F07188B648300BC7F6B /* SCMeasurementErrorCanceller.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,8 @@
 		14EA1286188A6381005AED52 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		887C7F02188ACCF000BC7F6B /* SCTriangleStripCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCTriangleStripCreator.h; sourceTree = "<group>"; };
 		887C7F03188ACCF000BC7F6B /* SCTriangleStripCreator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCTriangleStripCreator.m; sourceTree = "<group>"; };
+		887C7F06188B648300BC7F6B /* SCMeasurementErrorCanceller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCMeasurementErrorCanceller.h; sourceTree = "<group>"; };
+		887C7F07188B648300BC7F6B /* SCMeasurementErrorCanceller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCMeasurementErrorCanceller.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +155,8 @@
 				14EA1255188A27DA005AED52 /* SCAppDelegate.m */,
 				887C7F02188ACCF000BC7F6B /* SCTriangleStripCreator.h */,
 				887C7F03188ACCF000BC7F6B /* SCTriangleStripCreator.m */,
+				887C7F06188B648300BC7F6B /* SCMeasurementErrorCanceller.h */,
+				887C7F07188B648300BC7F6B /* SCMeasurementErrorCanceller.m */,
 				14EA1257188A27DA005AED52 /* Main.storyboard */,
 				14397D9C188A69C10014CB27 /* ScannerGLKViewController.h */,
 				14397D9D188A69C10014CB27 /* ScannerGLKViewController.m */,
@@ -306,6 +311,7 @@
 				14EA1283188A4E97005AED52 /* SCBitmapData.m in Sources */,
 				14EA125C188A27DA005AED52 /* SCViewController.m in Sources */,
 				14EA1252188A27DA005AED52 /* main.m in Sources */,
+				887C7F08188B648300BC7F6B /* SCMeasurementErrorCanceller.m in Sources */,
 				14397D9E188A69C10014CB27 /* ScannerGLKViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
