@@ -66,21 +66,22 @@
 	[self.videoCaptureSession addInput:input];
 	//hook up the session and input
 	
-	AVCaptureVideoDataOutput *output = [[AVCaptureVideoDataOutput alloc] init];
-	output.videoSettings = [NSDictionary dictionaryWithObject: [NSNumber numberWithInt: kCVPixelFormatType_32BGRA]
+	AVCaptureVideoDataOutput *outputRGB = [[AVCaptureVideoDataOutput alloc] init];
+	outputRGB.videoSettings = [NSDictionary dictionaryWithObject: [NSNumber numberWithInt: kCVPixelFormatType_32BGRA]
                                                        forKey: (id)kCVPixelBufferPixelFormatTypeKey];
-	[self.videoCaptureSession addOutput:output];
+	[self.videoCaptureSession addOutput:outputRGB];
 	
-	dispatch_queue_t sampleBufferQueue = dispatch_queue_create("sampleBufferQueue", NULL);
+	dispatch_queue_t sampleBufferQueueRGB = dispatch_queue_create("sampleBufferQueueRGB", NULL);
 	
 	//If the camera is not put on the main queue, the app silently crashes with memory warnings when calling the main
+	
 	//Queue from the SampleBuffer delegate method.
 	//
 	//For now, if we want UI changes from analyzing the camera data, the SampleBuffer must be dispatched to the main queue.
 	
-	[output setSampleBufferDelegate:self queue: sampleBufferQueue];
+	[outputRGB setSampleBufferDelegate:self queue: sampleBufferQueueRGB];
 	
-	AVCaptureConnection *videoConnection = [output connectionWithMediaType:AVMediaTypeVideo];
+	AVCaptureConnection *videoConnection = [outputRGB connectionWithMediaType:AVMediaTypeVideo];
 	if ([videoConnection isVideoOrientationSupported])
 	{
         [videoConnection setVideoOrientation:AVCaptureVideoOrientationPortrait];
@@ -201,6 +202,34 @@ void colorAtlocation(int row, int col, uint8_t* data, int width, int* red, int* 
     return;
 }
 
+void RGBToHSV(int r, int g, int b, float *h, float *s, float *v) {
+    
+    float min, max, delta;
+    min = MIN( r, MIN(g, b ));
+    max = MAX( r, MAX(g, b ));
+    
+    *v = max;
+    delta = max - min;
+    
+    if (max != 0) {
+        *s = delta / max;
+    } else {
+        // r = g = b = 0
+        *s = 0;
+        *h = -1;
+        return;
+    }
+    if (r == max) {
+        *h = (g - b) / delta;
+    } else if (g == max) {
+        *h = 2 + (b - r) / delta;
+    } else {
+        *h = 4 + (r - g) / delta;
+    }
+    *h *= 60;
+    if (*h < 0) *h += 360;
+}
+
 int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
 
     int red, green, blue, maxRed, maxRedIndex, numSuccessfulLines = 0;
@@ -212,13 +241,15 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
     
 #define RED (red > 130 && green < 80 && blue < 80)
 #define WHITE (red > 120 && green > 120 && blue > 120)
-    
+
     int lineState = beforeState;
     int pixelCount = 0;
     int pixelsThatDontCount = 0;
     BOOL passedStateMachine = NO;
-    
+
     int *heights = malloc(sizeof(int) * resolution.width);
+
+    // finite state machine in RGB
     for (int col = 0; col < resolution.width; col++) {
         maxRed = maxRedIndex = 0;
         pixelCount = 0;
@@ -233,7 +264,6 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
                             &red,
                             &green,
                             &blue);
-            
             
             
             if (lineState == beforeState) { //initial state of the Automota machine
@@ -285,6 +315,9 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
                     pixelsThatDontCount++;
                 }
             }
+            
+            
+            
             if (passedStateMachine) {
 //                NSLog(@"Passed!");
                 numSuccessfulLines++;
@@ -303,6 +336,106 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
                 break;
             }
         }
+////        heights[col] = maxRedIndex;
+////        for (int i = 0; i < 300; i++) {
+////            if (maxRedIndex > resolution.height) {
+////                continue;
+////            }
+//            maxRedIndex++;
+//            data[(col + maxRedIndex * (int)resolution.width)*4] = 0;
+//            data[(col + maxRedIndex * (int)resolution.width)*4+1] = 0;
+//            data[(col + maxRedIndex * (int)resolution.width)*4+2] = 0;
+     //   }
+    }
+    
+//    // finite state machine in HSV
+//    for (int col = 0; col < resolution.width; col++) {
+//        
+//        for (int col = 0; col < resolution.width; col++) {
+//            maxRed = maxRedIndex = 0;
+//            pixelCount = 0;
+//            pixelsThatDontCount = 0;
+//            lineState = beforeState;
+//            passedStateMachine = NO;
+//            for (int row = 0; row < resolution.height; row++) {
+//                colorAtlocation(row, col, data, resolution.width, &red, &green, &blue);
+//                RGBToHSV(red, green, blue, &hue, &saturation, &brightness);
+//                
+//#define HSVRED ((hue > 300.0 / 360.0 && hue <= 359.0 / 360.0) || (hue >= 0 && hue <= 35.0 / 360.0))
+//#define HSVWHITE (brightness >= 80)
+//                
+//                if (lineState == beforeState) { //initial state of the Automota machine
+//                    if (HSVRED) {
+//                        // it's a orange-red to purple-red color
+//                        pixelCount++;
+//                        lineState = stateFirstRed;
+//                    }
+//                } else if (lineState == stateFirstRed) {//found a line of red pixels
+//                    if (HSVRED) {
+//                        pixelCount++;
+//                    } else if (HSVWHITE && pixelCount > 5) {
+//                        pixelCount = 1;
+//                        pixelsThatDontCount = 0;
+//                        lineState = statewhite;
+//                    }else if(pixelsThatDontCount > 10) {
+//                        pixelCount = 0;
+//                        pixelsThatDontCount = 0;
+//                        lineState = beforeState;
+//                    } else {
+//                        pixelsThatDontCount++;
+//                    }
+//                } else if (lineState == statewhite) {
+//                    if (HSVWHITE) {
+//                        pixelCount++;
+//                    } else if (HSVRED && pixelCount <= 350) {
+//                        pixelCount = 1;
+//                        pixelsThatDontCount = 0;
+//                        lineState = stateSecondRed;
+//                    }else if(pixelsThatDontCount > 10) {
+//                        pixelCount = 0;
+//                        pixelsThatDontCount = 0;
+//                        lineState = beforeState;
+//                    } else {
+//                        pixelsThatDontCount++;
+//                    }
+//                } else if (lineState == stateSecondRed) {
+//                    if (HSVRED) {
+//                        pixelCount++;
+//                    } else if (pixelCount > 2) {
+//                        pixelCount = 0;
+//                        pixelsThatDontCount = 0;
+//                        lineState = beforeState;
+//                        passedStateMachine = YES;
+//                    }else if(pixelsThatDontCount > 20) {
+//                        pixelCount = 0;
+//                        pixelsThatDontCount = 0;
+//                        lineState = beforeState;
+//                    } else {
+//                        pixelsThatDontCount++;
+//                    }
+//                }
+//                
+//                
+//                
+//                if (passedStateMachine) {
+//                    NSLog(@"Passed!");
+//                    for (int i = -20; i < 20; i++) {
+//                        if ((row+i) > resolution.height) {
+//                            continue;
+//                        }
+//                        //                    NSLog(@"width float: %f, width int: %d", resolution.width, (int)resolution.width);
+//                        //                    NSLog(@"col: %d, row: %d, row+i:%d", col, row, row+i);
+//                        //                    NSLog(@"index:%d", col, row, row+i);
+//                        data[(col + (row+i) * ((int)resolution.width + 8))*4] = 255;
+//                        data[(col + (row+i) * ((int)resolution.width + 8))*4+1] = 0;
+//                        data[(col + (row+i) * ((int)resolution.width + 8))*4+2] = 255;
+//                        
+//                    }
+//                    break;
+//                }
+//            }
+//        }
+//        
 //        heights[col] = maxRedIndex;
 //        for (int i = 0; i < 300; i++) {
 //            if (maxRedIndex > resolution.height) {
@@ -312,35 +445,38 @@ int * getRedHeightsFromPixelBuffer(uint8_t * data, CGSize resolution) {
 //            data[(col + maxRedIndex * (int)resolution.width)*4] = 0;
 //            data[(col + maxRedIndex * (int)resolution.width)*4+1] = 0;
 //            data[(col + maxRedIndex * (int)resolution.width)*4+2] = 0;
-//        }
-    }
+//    }
     if (numSuccessfulLines <= resolution.width / 3) {
         return NULL;
     } else {
         //need to take out the zeroes
-//        for (int i = 0; i < resolution.width; i++) {
-//            if (heights[i] == 0) {
-//                int leftIndex, rightIndex;
-//                
-//                // j and k are nearest left and right indices with non-zero values
-//                for (leftIndex = i; heights[leftIndex] == 0 && leftIndex >= 0; leftIndex--) {}
-//                for (rightIndex = i; heights[rightIndex] == 0 && rightIndex <= resolution.width-1; rightIndex++) {}
-//                
-//                if (leftIndex == 0) { // zero value on left edge
-//                    heights[i] = heights[rightIndex];
-//                } else if (rightIndex == resolution.width-1) { // zero value on right edge
-//                    heights[i] = heights[leftIndex];
-//                } else { // average nearest left and right non-zero values
-//                    heights[i] = heights[leftIndex] + heights[rightIndex] / 2;
-//                }
-//            }
-//        }
+        for (int i = 0; i < resolution.width; i++) {
+            if (heights[i] == 0) {
+                int leftIndex, rightIndex;
+                
+                // j and k are nearest left and right indices with non-zero values
+                for (leftIndex = i; heights[leftIndex] == 0 && leftIndex > 0; leftIndex--) {}
+                for (rightIndex = i; heights[rightIndex] == 0 && rightIndex < resolution.width - 1; rightIndex++) {}
+                
+                if (leftIndex == 0) { // zero value on left edge
+                    heights[i] = heights[rightIndex];
+//                    NSLog(@"%d %d", heights[leftIndex], heights[rightIndex]);
+                } else if (rightIndex == resolution.width-1) { // zero value on right edge
+                    heights[i] = heights[leftIndex];
+//                    NSLog(@"%d %d", heights[leftIndex], heights[rightIndex]);
+                } else { // average nearest left and right non-zero values
+                    int temp = (heights[leftIndex] + heights[rightIndex]) / 2;
+                    heights[i] = temp;
+                }
+            }
+        }
         NSMutableArray * tempHeight = [[NSMutableArray alloc] init];
         for (int i = 0; i < resolution.width; i++) {
             [tempHeight addObject:[NSNumber numberWithInt:heights[i]]];
         }
-        //
+        
         return heights;
+//        [tempHeight addObject:[NSNumber numberWithInt:heights[i]]];
     }
 }
 

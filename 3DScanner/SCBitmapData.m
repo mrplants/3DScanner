@@ -60,7 +60,6 @@
 -(NSArray *)extractRedValueHeightDifferences
 {
     NSMutableArray *heights = [[NSMutableArray alloc] init];
-    CGPoint point;
     int maxRed = 0;
     float minHeight = self.resolution.width, currentHeight;
     self.imageWidth = self.resolution.height;
