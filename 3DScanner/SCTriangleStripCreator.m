@@ -100,6 +100,9 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
 }
 
 - (void)calculate {
+    NSMutableArray *tempVertexArray = [[NSMutableArray alloc] init];
+    NSMutableArray *tempIndexArray = [[NSMutableArray alloc] init];
+
     self.lengthOfVertexArray = (self.lengthOfPointsOnLine * 2 - 2) * self.numberOfLinesGiven * 6;
     self.lengthOfIndexArray = (self.lengthOfPointsOnLine * 2 - 2) * self.numberOfLinesGiven;
     self.vertexArray = malloc(self.lengthOfVertexArray * sizeof(GLfloat));
@@ -109,7 +112,7 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
     // one line at a time approach
     for (int frame = 0; frame < self.numberOfLinesGiven; frame++) {
         
-        for (int row = 0; row < self.lengthOfPointsOnLine - 1; row++) {
+        for (int row = 0; row < self.lengthOfPointsOnLine - 1; row+=6) {
             
             CGPoint3D rootPoint, rightPoint, leftPoint;
             
@@ -133,35 +136,35 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
             //calculate normal
             CGPoint3D normal = crossProductWithThreePoints(rootPoint, rightPoint, leftPoint);
             
-            NSLog(@"index of first point: %d", (frame) * self.numberOfLinesGiven + (row*6));
+            NSLog(@"index of first point: %d", (frame*6) * self.lengthOfPointsOnLine + (row*6));
 
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6)] = rootPoint.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 1] = rootPoint.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 2] = rootPoint.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6)] = rootPoint.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 1] = rootPoint.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 2] = rootPoint.z;
             
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 3] = normal.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 4] = normal.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 5] = normal.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 3] = normal.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 4] = normal.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 5] = normal.z;
 
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 6] = rightPoint.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 7] = rightPoint.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 8] = rightPoint.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 6] = rightPoint.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 7] = rightPoint.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 8] = rightPoint.z;
             
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 9] = normal.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 10] = normal.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 11] = normal.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 9] = normal.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 10] = normal.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 11] = normal.z;
 
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 12] = leftPoint.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 13] = leftPoint.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 14] = leftPoint.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 12] = leftPoint.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 13] = leftPoint.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 14] = leftPoint.z;
             
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 15] = normal.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 16] = normal.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + (row*6) + 17] = normal.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 15] = normal.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 16] = normal.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + (row*6) + 17] = normal.z;
             
-            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)] = (frame) * self.numberOfLinesGiven + (row*3);
-            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+1] = (frame) * self.numberOfLinesGiven + (row*3)+1;
-            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+2] = (frame) * self.numberOfLinesGiven + (row*3)+2;
+//            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)] = frame * self.numberOfLinesGiven + (row*3);
+//            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+1] = frame * self.numberOfLinesGiven + (row*3)+1;
+//            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+2] = frame * self.numberOfLinesGiven + (row*3)+2;
 
             rootPoint = shiftPointInXDirection(rootPoint);
             leftPoint = leftPoint;
@@ -169,37 +172,48 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
             //calculate normal
             normal = crossProductWithThreePoints(rootPoint, rightPoint, leftPoint);
             
-            NSLog(@"index of second point: %d", (frame) * self.numberOfLinesGiven + ((row+1)*6));
+            NSLog(@"index of second point: %d", (frame*6) * self.lengthOfPointsOnLine + ((row+3)*6));
             
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6)] = rootPoint.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 1] = rootPoint.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 2] = rootPoint.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6)] = rootPoint.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 1] = rootPoint.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 2] = rootPoint.z;
             
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 3] = normal.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 4] = normal.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 5] = normal.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 3] = normal.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 4] = normal.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 5] = normal.z;
             
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 6] = rightPoint.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 7] = rightPoint.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 8] = rightPoint.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 6] = rightPoint.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 7] = rightPoint.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 8] = rightPoint.z;
             
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 9] = normal.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 10] = normal.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 11] = normal.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 9] = normal.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 10] = normal.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 11] = normal.z;
             
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 12] = leftPoint.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 13] = leftPoint.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 14] = leftPoint.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 12] = leftPoint.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 13] = leftPoint.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 14] = leftPoint.z;
             
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 15] = normal.x;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 16] = normal.y;
-            self.vertexArray[(frame) * self.numberOfLinesGiven + ((row+1)*6) + 17] = normal.z;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 15] = normal.x;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 16] = normal.y;
+            self.vertexArray[(frame*6) * self.lengthOfPointsOnLine + ((row+3)*6) + 17] = normal.z;
 
-            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+4] = (frame) * self.numberOfLinesGiven + (row*3)+4;
-            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+5] = (frame) * self.numberOfLinesGiven + (row*3)+5;
-            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+6] = (frame) * self.numberOfLinesGiven + (row*3)+6;
-            
+//            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+3] = frame * self.numberOfLinesGiven + (row*3)+3;
+//            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+4] = frame * self.numberOfLinesGiven + (row*3)+4;
+//            self.indexArray[(frame) * self.numberOfLinesGiven + (row*3)+5] = frame * self.numberOfLinesGiven + (row*3)+5;
+            tempIndexArray = [[NSMutableArray alloc] init];
+            for (int i = 0; i < self.lengthOfIndexArray; i++) {
+                [tempIndexArray addObject:[NSNumber numberWithUnsignedInt:self.indexArray[i]]];
+            }
+            tempVertexArray = [[NSMutableArray alloc] init];
+            for (int i = 0; i < self.lengthOfVertexArray; i++) {
+                [tempVertexArray addObject:[NSNumber numberWithFloat:self.vertexArray[i]]];
+            }
         }
+    }
+    
+    for (int i = 0; i < self.lengthOfIndexArray; i++) {
+        self.indexArray[i] = i;
     }
     [self scalePoints];
 //            // first triangle: (1, 0), (1, 1), (2, 0)
@@ -238,11 +252,11 @@ CGPoint3D shiftPointInXDirection(CGPoint3D pt) {
 //        }
 //    }
     
-    NSMutableArray *tempIndexArray = [[NSMutableArray alloc] init];
+    tempIndexArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < self.lengthOfIndexArray; i++) {
         [tempIndexArray addObject:[NSNumber numberWithUnsignedInt:self.indexArray[i]]];
     }
-    NSMutableArray *tempVertexArray = [[NSMutableArray alloc] init];
+    tempVertexArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < self.lengthOfVertexArray; i++) {
         [tempVertexArray addObject:[NSNumber numberWithFloat:self.vertexArray[i]]];
     }
