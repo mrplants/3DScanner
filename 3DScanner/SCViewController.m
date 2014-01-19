@@ -8,6 +8,7 @@
 
 #import "SCViewController.h"
 @import AVFoundation;
+@import CoreMotion;
 #import "SCBitmapData.h"
 #import "ScannerGLKViewController.h"
 #import "SCTriangleStripCreator.h"
@@ -28,9 +29,18 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *testImageView;
 
+@property (strong, nonatomic) CMMotionManager *motionManager;
+
 @end
 
 @implementation SCViewController
+
+- (CMMotionManager *)motionManager {
+    if (!_motionManager) _motionManager = [[CMMotionManager alloc] init];
+    [_motionManager startAccelerometerUpdates];
+    [_motionManager startGyroUpdates];
+    return _motionManager;
+}
 
 -(void)viewDidLayoutSubviews
 {
@@ -125,6 +135,11 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 	{
 		NSLog(@"Time stamp: Before image analysis");
 		self.isProcessingSampleFrame = YES;
+        
+        // get accelerometer and gyro data
+        CMAcceleration acceleration = [self.motionManager accelerometerData].acceleration;
+        CMRotationRate gyroRotationRate = [self.motionManager gyroData].rotationRate;
+        
 		
 		// get pixel buffer reference
         CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)CMSampleBufferGetImageBuffer(sampleBuffer);
